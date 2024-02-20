@@ -10,3 +10,4 @@
 - Lista zakupów
 - Notatki
 - Zmiana motywu aplikacji (dzien/noc)
+- Haszowanie hasła
