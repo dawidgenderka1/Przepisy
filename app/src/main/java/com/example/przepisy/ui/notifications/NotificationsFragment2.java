@@ -1,0 +1,38 @@
+package com.example.przepisy.ui.notifications;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.przepisy.databinding.FragmentNotifications2Binding;
+import com.example.przepisy.databinding.FragmentNotificationsBinding;
+
+public class NotificationsFragment2 extends Fragment {
+
+    private FragmentNotifications2Binding binding;
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        NotificationsViewModel notificationsViewModel =
+                new ViewModelProvider(this).get(NotificationsViewModel.class);
+
+        binding = FragmentNotifications2Binding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        //final TextView textView = binding.textNotifications;
+        //notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
