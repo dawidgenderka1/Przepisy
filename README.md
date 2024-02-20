@@ -9,3 +9,4 @@
 - Funkcja dodawania ulubionych przepisów
 - Lista zakupów
 - Notatki
+- Zmiana motywu aplikacji (dzien/noc)
