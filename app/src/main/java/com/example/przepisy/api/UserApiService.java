@@ -1,6 +1,8 @@
 package com.example.przepisy.api;
 
 import com.example.przepisy.Comment;
+import com.example.przepisy.Note;
+import com.example.przepisy.NoteResponse;
 import com.example.przepisy.Rating;
 import com.example.przepisy.RatingResponse;
 import com.example.przepisy.Recipe;
@@ -38,11 +40,16 @@ public interface UserApiService {
     @POST("/addRating")
     Call<Void> addRating(@Body Rating rating);
 
-    @PUT("/updateRating")
-    Call<Void> updateRating(@Body Rating rating);
-
     @GET("/getRating")
     Call<RatingResponse> getRating(@Query("RecipeID") int RecipeID, @Query("Username") String Username);
+
+    @POST("/addNote")
+    Call<Void> addNote(@Body Note note);
+
+    @GET("/getNotes")
+    Call<NoteResponse> getNote(@Query("RecipeID") int RecipeID, @Query("Username") String Username);
+
+
 
 
 

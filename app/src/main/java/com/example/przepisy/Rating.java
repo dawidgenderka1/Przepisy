@@ -5,6 +5,12 @@ public class Rating {
     private String Username;
     private int Stars;
 
+    public Rating(int RecipeID, String Username, int Stars) {
+        this.RecipeID = RecipeID;
+        this.Username = Username;
+        this.Stars = Stars;
+    }
+
     // Konstruktor, gettery i settery
 }
 

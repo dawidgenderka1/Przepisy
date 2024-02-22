@@ -3,5 +3,12 @@ package com.example.przepisy;
 public class RatingResponse {
     private int Stars;
 
-    // Konstruktor, gettery i settery
+    public int getStars() {
+        return Stars;
+    }
+
+    public void setStars(int stars) {
+        Stars = stars;
+    }
 }
+

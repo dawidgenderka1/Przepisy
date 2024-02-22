@@ -14,15 +14,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.przepisy.Comment;
 import com.example.przepisy.CommentsAdapter;
 import com.example.przepisy.MainActivity;
+import com.example.przepisy.Note;
+import com.example.przepisy.NoteResponse;
 import com.example.przepisy.R;
+import com.example.przepisy.Rating;
+import com.example.przepisy.RatingResponse;
 import com.example.przepisy.SessionManager;
 import com.example.przepisy.api.ApiClient;
 import com.example.przepisy.api.UserApiService;
@@ -45,6 +52,10 @@ public class RecipeDetailFragment extends Fragment {
     private String mParam2;
     RecyclerView commentsRecyclerView;
     EditText commentEditText;
+    Spinner ratingSpinner;
+    Button sendCommentButton;
+    EditText noteEditText;
+    Button saveNoteButton;
     View view;
 
     public RecipeDetailFragment() {
@@ -73,17 +84,49 @@ public class RecipeDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         commentEditText = view.findViewById(R.id.commentEditText);
-        Button sendCommentButton = view.findViewById(R.id.sendCommentButton);
+        sendCommentButton = view.findViewById(R.id.sendCommentButton);
+        noteEditText = view.findViewById(R.id.noteEditText);
+        saveNoteButton = view.findViewById(R.id.saveNoteButton);
+
+        ratingSpinner = view.findViewById(R.id.ratingSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.rating_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ratingSpinner.setAdapter(adapter);
+
+        ratingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) { // Zakładając, że "Oceń" jest na pozycji 0
+                    int rating = Integer.parseInt(parent.getItemAtPosition(position).toString());
+                    // Aktualizacja oceny w bazie danych
+                    updateRating(recipeid, rating);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Można zignorować
+            }
+        });
 
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
             // Użytkownik nie jest zalogowany, ukryj EditText i Button
             commentEditText.setVisibility(View.GONE);
             sendCommentButton.setVisibility(View.GONE);
+            ratingSpinner.setVisibility(View.GONE);
+            noteEditText.setVisibility(View.GONE);
+            saveNoteButton.setVisibility(View.GONE);
         }
         else{
             commentEditText.setVisibility(View.VISIBLE);
             sendCommentButton.setVisibility(View.VISIBLE);
+            ratingSpinner.setVisibility(View.VISIBLE);
+            noteEditText.setVisibility(View.VISIBLE);
+            saveNoteButton.setVisibility(View.VISIBLE);
         }
+
+
 
         if (getArguments() != null) {
             String title = getArguments().getString("title");
@@ -109,15 +152,25 @@ public class RecipeDetailFragment extends Fragment {
             }
         });
 
+        saveNoteButton.setOnClickListener(v -> {
+            String noteText = noteEditText.getText().toString();
+            if (!noteText.isEmpty()) {
+                createNote(recipeid, noteText);
+            } else {
+                Toast.makeText(getContext(), "Notatka jest pusta", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // Ustawienie pustego adaptera
         commentsRecyclerView.setAdapter(new CommentsAdapter(new ArrayList<>()));
 
 
-        int recipeId = getArguments().getInt("recipeId", -1);
-
-        loadComments(recipeId, commentsRecyclerView);
+        //int recipeId = getArguments().getInt("recipeId", -1);
+        fetchAndSetRating(recipeid, SessionManager.getInstance(getContext()).getUsername());
+        fetchAndSetNote(recipeid, SessionManager.getInstance(getContext()).getUsername());
+        loadComments(recipeid, commentsRecyclerView);
 
         return view;
     }
@@ -185,5 +238,112 @@ public class RecipeDetailFragment extends Fragment {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    private void updateRating(int recipeId, int rating) {
+        // Przygotuj dane oceny
+        Rating ratingData = new Rating(recipeId, SessionManager.getInstance(getContext()).getUsername(), rating);
+
+        // Użyj Retrofit do aktualizacji oceny
+        UserApiService apiService = ApiClient.getUserService();
+        apiService.addRating(ratingData).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Ocena została zaktualizowana", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Nie udało się zaktualizować oceny", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchAndSetRating(int recipeId, String username) {
+        UserApiService apiService = ApiClient.getUserService();
+        apiService.getRating(recipeId, username).enqueue(new Callback<RatingResponse>() {
+            @Override
+            public void onResponse(Call<RatingResponse> call, Response<RatingResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    int rating = response.body().getStars();
+                    // Ustaw spinner na odpowiedniej pozycji
+                    setRatingSpinnerPosition(rating);
+                } else {
+                    // Jeśli ocena nie istnieje lub jest błąd, ustaw na "Oceń"
+                    ratingSpinner.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RatingResponse> call, Throwable t) {
+                Log.e("RatingFetchError", "Error fetching rating: ", t);
+                ratingSpinner.setSelection(0); // Ustaw na "Oceń" w przypadku błędu
+            }
+        });
+    }
+
+    private void fetchAndSetNote(int recipeId, String username) {
+        UserApiService apiService = ApiClient.getUserService();
+        apiService.getNote(recipeId, username).enqueue(new Callback<NoteResponse>() {
+            @Override
+            public void onResponse(Call<NoteResponse> call, Response<NoteResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String noteText = response.body().getNoteText();
+                    // Ustaw tekst notatki w EditText
+                    noteEditText.setText(noteText);
+                } else {
+                    // Jeśli notatka nie istnieje lub jest błąd, ustaw puste pole
+                    noteEditText.setText("błąd");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NoteResponse> call, Throwable t) {
+                Log.e("NoteFetchError", "Error fetching note: ", t);
+                noteEditText.setText(""); // Ustaw puste pole w przypadku błędu
+            }
+        });
+    }
+
+
+    private void setRatingSpinnerPosition(int rating) {
+        ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) ratingSpinner.getAdapter();
+        int position = adapter.getPosition(String.valueOf(rating));
+        ratingSpinner.setSelection(position);
+    }
+
+    private void createNote(int recipeId, String noteText) {
+        // Tutaj logika tworzenia komentarza za pomocą API
+        // Przykład użycia Retrofit do wysłania komentarza
+        UserApiService apiService = ApiClient.getUserService();
+
+        String username = SessionManager.getInstance(getContext()).getUsername();
+
+        Note newNote = new Note(recipeId, username, noteText);
+        apiService.addNote(newNote).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Notatka została dodany", Toast.LENGTH_SHORT).show();
+                    hideKeyboardFrom(getContext(), view);
+
+                    // Możesz odświeżyć listę komentarzy itd.
+                } else {
+                    Toast.makeText(getContext(), "Nie udało się dodać notatki", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
 
 }
