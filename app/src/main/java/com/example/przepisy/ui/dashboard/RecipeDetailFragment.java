@@ -1,7 +1,11 @@
 package com.example.przepisy.ui.dashboard;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -22,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.przepisy.AlarmReceiver;
 import com.example.przepisy.Comment;
 import com.example.przepisy.CommentsAdapter;
 import com.example.przepisy.MainActivity;
@@ -36,6 +41,7 @@ import com.example.przepisy.api.UserApiService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +54,7 @@ public class RecipeDetailFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private int recipeid = -1;
+    String title;
     private String mParam1;
     private String mParam2;
     RecyclerView commentsRecyclerView;
@@ -110,6 +117,24 @@ public class RecipeDetailFragment extends Fragment {
             }
         });
 
+        Button buttonSetAlarm = view.findViewById(R.id.button_set_alarm);
+        buttonSetAlarm.setOnClickListener(v -> {
+            Calendar currentTime = Calendar.getInstance();
+            int hour = currentTime.get(Calendar.HOUR_OF_DAY);
+            int minute = currentTime.get(Calendar.MINUTE);
+
+            TimePickerDialog timePicker;
+            timePicker = new TimePickerDialog(getActivity(), (view, hourOfDay, minuteOfHour) -> {
+                // Tutaj zapisz wybrany czas i zaplanuj alarm
+                Calendar selectedTime = Calendar.getInstance();
+                selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                selectedTime.set(Calendar.MINUTE, minuteOfHour);
+                scheduleNotification(selectedTime);
+            }, hour, minute, true);
+            timePicker.setTitle("Wybierz godzinę powiadomienia");
+            timePicker.show();
+        });
+
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
             // Użytkownik nie jest zalogowany, ukryj EditText i Button
             commentEditText.setVisibility(View.GONE);
@@ -129,7 +154,7 @@ public class RecipeDetailFragment extends Fragment {
 
 
         if (getArguments() != null) {
-            String title = getArguments().getString("title");
+            title = getArguments().getString("title");
             recipeid = getArguments().getInt("recipeId");
             String description = getArguments().getString("description");
             int cookingTime = getArguments().getInt("cookingTime");
@@ -174,6 +199,18 @@ public class RecipeDetailFragment extends Fragment {
 
         return view;
     }
+
+    private void scheduleNotification(Calendar selectedTime) {
+        Intent intent = new Intent(getActivity().getApplicationContext(), AlarmReceiver.class);
+        intent.putExtra("title", title);
+        // Możesz dodać dodatkowe dane do Intentu, jeśli chcesz przekazać do powiadomienia
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, selectedTime.getTimeInMillis(), pendingIntent);
+    }
+
 
     private void createComment(int recipeId, String commentText) {
         // Tutaj logika tworzenia komentarza za pomocą API

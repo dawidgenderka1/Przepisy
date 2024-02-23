@@ -168,5 +168,3 @@ public class DashboardFragment2 extends Fragment {
         }
     }
 }
-
-
