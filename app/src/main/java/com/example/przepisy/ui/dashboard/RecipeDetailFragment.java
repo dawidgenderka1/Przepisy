@@ -55,6 +55,10 @@ public class RecipeDetailFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private int recipeid = -1;
     String title;
+    String description;
+    int cookingTime;
+    String cuisineType;
+    String instruction;
     private String mParam1;
     private String mParam2;
     RecyclerView commentsRecyclerView;
@@ -156,10 +160,10 @@ public class RecipeDetailFragment extends Fragment {
         if (getArguments() != null) {
             title = getArguments().getString("title");
             recipeid = getArguments().getInt("recipeId");
-            String description = getArguments().getString("description");
-            int cookingTime = getArguments().getInt("cookingTime");
-            String cuisineType = getArguments().getString("cuisineType");
-            String instruction = getArguments().getString("instruction");
+            description = getArguments().getString("description");
+            cookingTime = getArguments().getInt("cookingTime");
+            cuisineType = getArguments().getString("cuisineType");
+            instruction = getArguments().getString("instruction");
 
             ((TextView) view.findViewById(R.id.recipeTitle)).setText(title);
             ((TextView) view.findViewById(R.id.recipeDescription)).setText(description);
@@ -203,6 +207,11 @@ public class RecipeDetailFragment extends Fragment {
     private void scheduleNotification(Calendar selectedTime) {
         Intent intent = new Intent(getActivity().getApplicationContext(), AlarmReceiver.class);
         intent.putExtra("title", title);
+        intent.putExtra("recipeid", recipeid);
+        intent.putExtra("description", description);
+        intent.putExtra("cuisineType", cuisineType);
+        intent.putExtra("cookingTime", cookingTime);
+        intent.putExtra("instruction", instruction);
         // Możesz dodać dodatkowe dane do Intentu, jeśli chcesz przekazać do powiadomienia
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -25,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private SessionManager sessionManager;
+    int recipeid=-1;
+    NavHostFragment navHostFragment;
+    NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         sessionManager = SessionManager.getInstance(getApplicationContext());
         //sessionManager.setLogin(false);
 
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
-        NavController navController = navHostFragment.getNavController();
+        navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
+        navController = navHostFragment.getNavController();
 
         if (sessionManager.isLoggedIn()) {
             navController.setGraph(R.navigation.mobile_navigation2);
@@ -51,17 +54,78 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Niezalogowany", "Niezalogowany!!");
         }
 
+
+
+
         BottomNavigationView navView = binding.navView;
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        navView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.navigation_home2) {
+                navController.navigate(R.id.navigation_home2);
+                return true;
+            } else if (itemId == R.id.navigation_dashboard2) {
+                navController.navigate(R.id.navigation_dashboard2);
+                return true;
+            } else if (itemId == R.id.navigation_notifications2) {
+                navController.navigate(R.id.navigation_notifications2);
+                return true;
+            }
+            // Dodaj tutaj obsługę dla pozostałych elementów, jeśli są
+
+            return false; // Domyślne zachowanie dla nierozpoznanych elementów
+        });
+
+
+
+        handleIntent(getIntent());
     }
 
     public void reloadActivity() {
         Intent intent = getIntent();
         finish();
         startActivity(intent);
+    }
+
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (intent != null) {
+            String title = intent.getStringExtra("title");
+            recipeid = intent.getIntExtra("recipeid", -1);
+            Log.d("Zalogowany", String.valueOf(recipeid));
+            Log.d("Zalogowany", String.valueOf(recipeid));
+            Log.d("Zalogowany", String.valueOf(recipeid));
+            String description = intent.getStringExtra("description");
+            int cookingTime = intent.getIntExtra("cookingTime", -1);
+            String cuisineType = intent.getStringExtra("cuisineType");
+            String instruction = intent.getStringExtra("instruction");
+            // Możesz pobrać więcej danych, jeśli są potrzebne
+
+            if (recipeid != -1) {
+                // Logika do otwarcia fragmentu ze szczegółami przepisu
+                // Możesz użyć NavController do nawigacji
+                //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main); // Upewnij się, że używasz właściwego ID dla NavHostFragment
+                Bundle bundle = new Bundle();
+                bundle.putString("title", title);
+                bundle.putInt("recipeid", recipeid);
+                bundle.putString("description", description);
+                bundle.putInt("cookingTime", cookingTime);
+                bundle.putString("cuisineType", cuisineType);
+                bundle.putString("instruction", instruction);
+                // Dodaj inne dane do bundle, jeśli są potrzebne
+                navController.navigate(R.id.action_details, bundle); // Zakładając, że masz odpowiednią akcję w grafie nawigacji
+            }
+        }
     }
 
 

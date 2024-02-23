@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -19,7 +20,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         String title = intent.getStringExtra("title");
 
         activityIntent.putExtra("title", intent.getStringExtra("title"));
-        activityIntent.putExtra("recipeId", intent.getIntExtra("recipeId", -1));
+        activityIntent.putExtra("recipeid", intent.getIntExtra("recipeid", -1));
         activityIntent.putExtra("description", intent.getStringExtra("description"));
         activityIntent.putExtra("cookingTime", intent.getIntExtra("cookingTime", 0));
         activityIntent.putExtra("cuisineType", intent.getStringExtra("cuisineType"));
@@ -27,7 +28,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0));
+
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_home_black_24dp)
@@ -43,6 +45,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
             notificationManager.createNotificationChannel(channel);
         }
+        Log.d("AlarmReceiver", "Recipe ID: " + intent.getIntExtra("recipeid", -1));
+
 
         notificationManager.notify(0, builder.build());
 

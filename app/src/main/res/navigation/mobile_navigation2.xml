@@ -9,17 +9,35 @@
         android:id="@+id/navigation_home2"
         android:name="com.example.przepisy.ui.home.HomeFragment2"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home2" />
+        tools:layout="@layout/fragment_home2" >
+    <action
+        android:id="@+id/action_details"
+        app:destination="@id/recipe_details" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard2"
         android:name="com.example.przepisy.ui.dashboard.DashboardFragment2"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard2" />
+        tools:layout="@layout/fragment_dashboard2" >
+        <action
+            android:id="@+id/action_details"
+            app:destination="@id/recipe_details" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_notifications2"
         android:name="com.example.przepisy.ui.notifications.NotificationsFragment2"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications2" />
+        tools:layout="@layout/fragment_notifications2" >
+        <action
+            android:id="@+id/action_details"
+            app:destination="@id/recipe_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recipe_details"
+        android:name="com.example.przepisy.ui.dashboard.RecipeDetailFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_recipe_detail" />
 </navigation>
