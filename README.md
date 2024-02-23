@@ -4,7 +4,6 @@
 - Język angielski/polski
 - Składniki w przepisach
 - Funkcja losowania przepisu
-- Przypomnienia
 - Funkcja dodawania ulubionych przepisów
 - Lista zakupów
 - Zmiana motywu aplikacji (dzien/noc)
@@ -13,3 +12,4 @@
 #DONE
 - Ocenianie
 - Notatki
+- Przypomnienia
