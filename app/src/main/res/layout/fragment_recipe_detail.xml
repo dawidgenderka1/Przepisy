@@ -13,25 +13,37 @@
         android:padding="16dp"
         android:background="@color/white">
 
+        <TextView
+            android:id="@+id/recipeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/recipeTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="8dp"/>
 
             <Spinner
                 android:id="@+id/ratingSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:entries="@array/rating_array"/>
+
+            <ImageView
+                android:id="@+id/yourImageViewId"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:src="@drawable/heart_empty"
+                android:tag="empty"
+                android:layout_marginTop="8dp"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true"/>
+
 
         </LinearLayout>
 

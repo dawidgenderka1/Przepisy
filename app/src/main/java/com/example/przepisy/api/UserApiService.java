@@ -1,6 +1,8 @@
 package com.example.przepisy.api;
 
+import com.example.przepisy.CheckFavouriteResponse;
 import com.example.przepisy.Comment;
+import com.example.przepisy.FavouriteToggleRequest;
 import com.example.przepisy.Note;
 import com.example.przepisy.NoteResponse;
 import com.example.przepisy.Rating;
@@ -48,6 +50,14 @@ public interface UserApiService {
 
     @GET("/getNotes")
     Call<NoteResponse> getNote(@Query("RecipeID") int RecipeID, @Query("Username") String Username);
+
+    @POST("toggleFavorite")
+    Call<Void> toggleFavorite(@Body FavouriteToggleRequest favoriteToggleRequest);
+
+    @GET("checkFavorite")
+    Call<CheckFavouriteResponse> checkFavorite(@Query("username") String username, @Query("recipeId") int recipeId);
+
+
 
 
 

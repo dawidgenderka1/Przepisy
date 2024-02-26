@@ -22,13 +22,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.przepisy.AlarmReceiver;
+import com.example.przepisy.CheckFavouriteResponse;
 import com.example.przepisy.Comment;
 import com.example.przepisy.CommentsAdapter;
+import com.example.przepisy.FavouriteToggleRequest;
 import com.example.przepisy.MainActivity;
 import com.example.przepisy.Note;
 import com.example.przepisy.NoteResponse;
@@ -68,6 +71,7 @@ public class RecipeDetailFragment extends Fragment {
     EditText noteEditText;
     Button saveNoteButton;
     View view;
+    ImageView imageView;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -139,6 +143,24 @@ public class RecipeDetailFragment extends Fragment {
             timePicker.show();
         });
 
+        imageView = view.findViewById(R.id.yourImageViewId);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Sprawdź, który obrazek jest obecnie ustawiony
+                if (imageView.getTag() != null && imageView.getTag().equals("full")) {
+                    // Jeśli serce jest pełne, zmień na puste
+                    imageView.setImageResource(R.drawable.heart_empty);
+                    imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                } else {
+                    // Jeśli serce jest puste, zmień na pełne
+                    imageView.setImageResource(R.drawable.heart_full);
+                    imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                }
+                toggleFavorite(recipeid);
+            }
+        });
+
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
             // Użytkownik nie jest zalogowany, ukryj EditText i Button
             commentEditText.setVisibility(View.GONE);
@@ -146,6 +168,7 @@ public class RecipeDetailFragment extends Fragment {
             ratingSpinner.setVisibility(View.GONE);
             noteEditText.setVisibility(View.GONE);
             saveNoteButton.setVisibility(View.GONE);
+            imageView.setVisibility(View.GONE);
         }
         else{
             commentEditText.setVisibility(View.VISIBLE);
@@ -153,6 +176,7 @@ public class RecipeDetailFragment extends Fragment {
             ratingSpinner.setVisibility(View.VISIBLE);
             noteEditText.setVisibility(View.VISIBLE);
             saveNoteButton.setVisibility(View.VISIBLE);
+            imageView.setVisibility(View.VISIBLE);
         }
 
 
@@ -171,6 +195,8 @@ public class RecipeDetailFragment extends Fragment {
             ((TextView) view.findViewById(R.id.recipeCuisineType)).setText(cuisineType);
             ((TextView) view.findViewById(R.id.recipeInstruction)).setText(instruction);
         }
+
+        checkIfRecipeIsFavorite(recipeid);
 
         sendCommentButton.setOnClickListener(v -> {
             String commentText = commentEditText.getText().toString();
@@ -194,6 +220,9 @@ public class RecipeDetailFragment extends Fragment {
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // Ustawienie pustego adaptera
         commentsRecyclerView.setAdapter(new CommentsAdapter(new ArrayList<>()));
+
+
+
 
 
         //int recipeId = getArguments().getInt("recipeId", -1);
@@ -388,6 +417,79 @@ public class RecipeDetailFragment extends Fragment {
             }
         });
     }
+
+    private void toggleFavorite(int recipeId) {
+        // Pobranie nazwy użytkownika z menedżera sesji lub innego źródła przechowującego dane użytkownika
+        String username = SessionManager.getInstance(getContext()).getUsername();
+
+        // Utworzenie instancji serwisu API
+        UserApiService apiService = ApiClient.getUserService();
+
+        // Utworzenie obiektu żądania
+        FavouriteToggleRequest request = new FavouriteToggleRequest(username, recipeId);
+
+        // Wywołanie metody API do przełączania ulubionych
+        apiService.toggleFavorite(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    // Informacja dla użytkownika o pomyślnym dodaniu/usunięciu przepisu z ulubionych
+                    Toast.makeText(getContext(), "Status ulubionych zmieniony", Toast.LENGTH_SHORT).show();
+
+                    // Tutaj możesz odświeżyć UI, np. zmienić ikonę serca
+                } else {
+                    // Obsługa odpowiedzi niepomyślnej, np. błędu walidacji lub problemów serwera
+                    Toast.makeText(getContext(), "Nie udało się zmienić statusu ulubionych", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                // Obsługa błędu połączenia
+                Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void checkIfRecipeIsFavorite(int recipeId) {
+        String username = SessionManager.getInstance(getContext()).getUsername();
+        // Utworzenie instancji serwisu API
+        UserApiService apiService = ApiClient.getUserService();
+
+        // Wywołanie metody checkFavorite z interfejsu API
+        Call<CheckFavouriteResponse> call = apiService.checkFavorite(username, recipeId);
+        call.enqueue(new Callback<CheckFavouriteResponse>() {
+            @Override
+            public void onResponse(Call<CheckFavouriteResponse> call, Response<CheckFavouriteResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Obsługa odpowiedzi - sprawdzenie, czy przepis jest ulubiony
+                    boolean isFavorite = response.body().isFavourite();
+                    if (isFavorite) {
+                        // Przepis jest w ulubionych
+                        Log.d("CheckFavorite", "Przepis jest dodany do ulubionych.");
+                        imageView.setImageResource(R.drawable.heart_full);
+                        imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                    } else {
+                        // Przepis nie jest w ulubionych
+                        Log.d("CheckFavorite", "Przepis nie jest dodany do ulubionych.");
+                        imageView.setImageResource(R.drawable.heart_empty);
+                        imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                    }
+                } else {
+                    // Błąd podczas komunikacji z serwerem lub błąd po stronie serwera
+                    Log.e("CheckFavorite", "Nie udało się sprawdzić ulubionych.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckFavouriteResponse> call, Throwable t) {
+                // Błąd połączenia z serwerem lub inny błąd
+                Log.e("CheckFavorite", "Błąd połączenia: " + t.getMessage());
+            }
+        });
+    }
+
+
 
 
 
