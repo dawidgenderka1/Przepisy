@@ -1,11 +1,15 @@
 package com.example.przepisy.ui.dashboard;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -23,6 +27,7 @@ import com.example.przepisy.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,6 +74,8 @@ public class DashboardFragment2 extends Fragment {
             binding.fabAddRecipe.setVisibility(View.VISIBLE);
         }
 
+        Toast.makeText(getContext(), "hmmmmm", Toast.LENGTH_SHORT).show();
+
         loadRecipes(); // Asynchroniczne ładowanie danych
 
         binding.fabAddRecipe.setOnClickListener(view -> {
@@ -92,8 +99,6 @@ public class DashboardFragment2 extends Fragment {
 
         return root;
     }
-
-
 
     private void loadRecipes() {
         UserApiService apiService = ApiClient.getUserService();

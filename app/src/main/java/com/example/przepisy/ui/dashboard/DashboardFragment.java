@@ -1,10 +1,14 @@
 package com.example.przepisy.ui.dashboard;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +25,7 @@ import com.example.przepisy.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +40,7 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+
         // Inicjalizacja RecyclerView z pustym adapterem
         RecipesAdapter adapter = new RecipesAdapter(new ArrayList<>(), new RecipesAdapter.RecipeClickListener() {
             @Override
@@ -42,11 +48,15 @@ public class DashboardFragment extends Fragment {
                 // Tutaj możesz na przykład wyświetlić Toast z dodatkowymi informacjami
                 Log.d("55", "index=");
             }
+
+
             @Override
             public void onHideRecyclerView() {
                 binding.recipesRecyclerView.setVisibility(View.GONE); // Ukrywa RecyclerView
             }
         });
+
+
 
 
 
@@ -60,6 +70,10 @@ public class DashboardFragment extends Fragment {
         else{
             binding.fabAddRecipe.setVisibility(View.VISIBLE);
         }
+
+
+
+
 
         loadRecipes(); // Asynchroniczne ładowanie danych
 
@@ -92,6 +106,8 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
+
+
 
     @Override
     public void onResume() {

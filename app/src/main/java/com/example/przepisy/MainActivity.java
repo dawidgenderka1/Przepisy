@@ -1,7 +1,10 @@
 package com.example.przepisy;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +23,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.przepisy.databinding.ActivityMainBinding;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,12 +81,24 @@ public class MainActivity extends AppCompatActivity {
                 navController.navigate(R.id.navigation_notifications2);
                 return true;
             }
+            if (itemId == R.id.navigation_home) {
+                navController.navigate(R.id.navigation_home);
+                return true;
+            } else if (itemId == R.id.navigation_dashboard) {
+                navController.navigate(R.id.navigation_dashboard);
+                return true;
+            } else if (itemId == R.id.navigation_notifications) {
+                navController.navigate(R.id.navigation_notifications);
+                return true;
+            }
             // Dodaj tutaj obsługę dla pozostałych elementów, jeśli są
 
             return false; // Domyślne zachowanie dla nierozpoznanych elementów
         });
 
-
+        String languageCode = mapLanguageToCode(sessionManager.getLanguage());
+        Locale locale = new Locale(languageCode);
+        updateLocale(locale);
 
         handleIntent(getIntent());
     }
@@ -125,6 +142,27 @@ public class MainActivity extends AppCompatActivity {
                 // Dodaj inne dane do bundle, jeśli są potrzebne
                 navController.navigate(R.id.action_details, bundle); // Zakładając, że masz odpowiednią akcję w grafie nawigacji
             }
+        }
+    }
+
+    public void updateLocale(Locale newLocale) {
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = newLocale;
+        res.updateConfiguration(conf, dm);
+        //Intent intent = new Intent(getActivity(), MainActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //startActivity(intent);
+    }
+
+    private String mapLanguageToCode(String languageName) {
+        switch (languageName) {
+            case "Język polski":
+                return "pl"; // Kod języka dla polskiego
+            // Angielski zostanie pominięty, aby korzystać z domyślnych zasobów z folderu `values`
+            default:
+                return ""; // Nie ustawiamy języka, korzystamy z domyślnych zasobów
         }
     }
 
