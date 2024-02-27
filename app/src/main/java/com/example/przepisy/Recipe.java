@@ -6,6 +6,7 @@ public class Recipe {
     private int RecipeID;
 
     private int UserID;
+    private String Username; // Nowe pole
 
     private String Title;
 
@@ -42,8 +43,8 @@ public class Recipe {
         this.Instrukcja = Instrukcja;
     }
 
-    public Recipe(int UserID, String Title, String Description, int CookingTime, String CuisineType, String Instrukcja) {
-        this.UserID = UserID;
+    public Recipe(String Username, String Title, String Description, int CookingTime, String CuisineType, String Instrukcja) {
+        this.Username = Username;
         this.Title = Title;
         this.Description = Description;
         this.CookingTime = CookingTime;

@@ -32,6 +32,8 @@ import com.example.przepisy.CheckFavouriteResponse;
 import com.example.przepisy.Comment;
 import com.example.przepisy.CommentsAdapter;
 import com.example.przepisy.FavouriteToggleRequest;
+import com.example.przepisy.Ingredient;
+import com.example.przepisy.IngredientsAdapter;
 import com.example.przepisy.MainActivity;
 import com.example.przepisy.Note;
 import com.example.przepisy.NoteResponse;
@@ -65,6 +67,7 @@ public class RecipeDetailFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     RecyclerView commentsRecyclerView;
+    RecyclerView ingredientsRecyclerView;
     EditText commentEditText;
     Spinner ratingSpinner;
     Button sendCommentButton;
@@ -221,6 +224,11 @@ public class RecipeDetailFragment extends Fragment {
         // Ustawienie pustego adaptera
         commentsRecyclerView.setAdapter(new CommentsAdapter(new ArrayList<>()));
 
+        ingredientsRecyclerView = view.findViewById(R.id.ingredientsRecyclerView);
+        ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Ustawienie pustego adaptera
+        ingredientsRecyclerView.setAdapter(new IngredientsAdapter(new ArrayList<>()));
+
 
 
 
@@ -229,6 +237,7 @@ public class RecipeDetailFragment extends Fragment {
         fetchAndSetRating(recipeid, SessionManager.getInstance(getContext()).getUsername());
         fetchAndSetNote(recipeid, SessionManager.getInstance(getContext()).getUsername());
         loadComments(recipeid, commentsRecyclerView);
+        loadIngredients(recipeid, ingredientsRecyclerView);
 
         return view;
     }
@@ -309,6 +318,31 @@ public class RecipeDetailFragment extends Fragment {
             }
         });
     }
+
+    private void loadIngredients(int recipeId, RecyclerView ingredientsRecyclerView) {
+        UserApiService apiService = ApiClient.getUserService();
+        apiService.getIngredientsByRecipe(recipeId).enqueue(new Callback<List<Ingredient>>() {
+            @Override
+            public void onResponse(Call<List<Ingredient>> call, Response<List<Ingredient>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    IngredientsAdapter adapter = (IngredientsAdapter) ingredientsRecyclerView.getAdapter();
+                    if (adapter != null) {
+                        adapter.updateData(response.body());
+                    } else {
+                        Log.e("RecipeDetailFragment", "Adapter nie jest zainicjalizowany");
+                    }
+                } else {
+                    Log.e("RecipeDetailFragment", "Brak komentarzy lub błąd: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Ingredient>> call, Throwable t) {
+                Log.e("RecipeDetailFragment", "Błąd połączenia: ", t);
+            }
+        });
+    }
+
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

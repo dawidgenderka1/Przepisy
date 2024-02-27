@@ -3,11 +3,15 @@ package com.example.przepisy.api;
 import com.example.przepisy.CheckFavouriteResponse;
 import com.example.przepisy.Comment;
 import com.example.przepisy.FavouriteToggleRequest;
+import com.example.przepisy.FindRecipeIdRequest;
+import com.example.przepisy.FindRecipeIdResponse;
+import com.example.przepisy.Ingredient;
 import com.example.przepisy.Note;
 import com.example.przepisy.NoteResponse;
 import com.example.przepisy.Rating;
 import com.example.przepisy.RatingResponse;
 import com.example.przepisy.Recipe;
+import com.example.przepisy.RecipeIngredientRequest;
 import com.example.przepisy.User;
 
 import java.util.List;
@@ -56,6 +60,23 @@ public interface UserApiService {
 
     @GET("checkFavorite")
     Call<CheckFavouriteResponse> checkFavorite(@Query("username") String username, @Query("recipeId") int recipeId);
+
+    @POST("findRecipeId")
+    Call<FindRecipeIdResponse> findRecipeId(@Body FindRecipeIdRequest request);
+
+
+    @POST("addRecipeIngredient")
+    Call<Void> addRecipeIngredient(@Body RecipeIngredientRequest recipeIngredientRequest);
+
+    @GET("getIngredients")
+    Call<List<IngredientNameResponse>> getIngredients();
+
+    @GET("/getIngredientsByRecipe/{recipeId}")
+    Call<List<Ingredient>> getIngredientsByRecipe(@Path("recipeId") int recipeId);
+
+
+
+
 
 
 

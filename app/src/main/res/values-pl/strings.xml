@@ -13,6 +13,10 @@
     <string name="confirm">Zatwierdź</string>
     <string name="return0">Powrót</string>
 
+    <string name="remove">Usuń</string>
+    <string name="quantity">Ilość</string>
+    <string name="add_ingredient">Dodaj</string>
+
     <string-array name="cuisine_types">
         <item>Włoska</item>
         <item>Japońska</item>
