@@ -4,6 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SessionManager {
     private static SessionManager instance;
     private SharedPreferences prefs;
@@ -14,6 +21,9 @@ public class SessionManager {
     private static final String USER_ID = "userId";
     private static final String LANGUAGE = "language"; // Dodane
     private static final String THEME = "theme"; // Dodane
+    private static final String INGREDIENT_IDS = "ingredientIds";
+
+
 
     // Prywatny konstruktor, aby zapobiec tworzeniu instancji z zewnątrz
     private SessionManager(Context context) {
@@ -75,6 +85,36 @@ public class SessionManager {
     public String getTheme() {
         return prefs.getString(THEME, "Motyw jasny"); // Domyślnie "Motyw jasny"
     }
+
+    public void setIngredientIds(List<Integer> ingredientIds) {
+        Gson gson = new Gson();
+        String json = gson.toJson(ingredientIds);
+        editor.putString(INGREDIENT_IDS, json);
+        editor.apply();
+    }
+
+    // Dodaj metodę do odczytywania listy identyfikatorów składników
+    public List<Integer> getIngredientIds() {
+        Gson gson = new Gson();
+        String json = prefs.getString(INGREDIENT_IDS, null);
+        Type type = new TypeToken<ArrayList<Integer>>() {}.getType();
+        List<Integer> ingredientIds = gson.fromJson(json, type);
+        return ingredientIds == null ? new ArrayList<>() : ingredientIds;
+    }
+
+    public void removeIngredientId(Integer ingredientId) {
+        // Pobierz aktualną listę identyfikatorów
+        List<Integer> ingredientIds = getIngredientIds();
+
+        // Usuń określony identyfikator, jeśli istnieje
+        if (ingredientIds.contains(ingredientId)) {
+            ingredientIds.remove(ingredientId);
+
+            // Zapisz zmodyfikowaną listę z powrotem
+            setIngredientIds(ingredientIds);
+        }
+    }
+
 
     // Możesz dodać więcej metod do zarządzania sesją użytkownika
 }

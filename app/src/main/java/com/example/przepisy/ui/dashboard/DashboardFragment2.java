@@ -131,7 +131,9 @@ public class DashboardFragment2 extends Fragment {
 
         // Pobierz nazwy składników z bazy danych i dodaj je do Spinnera
         UserApiService apiService = ApiClient.getUserService();
-        apiService.getIngredients().enqueue(new Callback<List<IngredientNameResponse>>() {
+
+        String currentLanguage = SessionManager.getInstance(getContext()).getLanguage();
+        apiService.getIngredients(currentLanguage).enqueue(new Callback<List<IngredientNameResponse>>() {
             @Override
             public void onResponse(Call<List<IngredientNameResponse>> call, Response<List<IngredientNameResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -260,12 +262,14 @@ public class DashboardFragment2 extends Fragment {
             String ingredientName = ingredientNameSpinner.getSelectedItem().toString();
             String quantity = quantityEditText.getText().toString();
 
+            String currentLanguage = SessionManager.getInstance(getContext()).getLanguage();
+
             //addRecipeIngredient(recipeId, ingredientName, quantity);
 
 
             RecipeIngredientRequest request = new RecipeIngredientRequest(recipeId, ingredientName, quantity);
 
-            apiService.addRecipeIngredient(request).enqueue(new Callback<Void>() {
+            apiService.addRecipeIngredient(request, currentLanguage).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {

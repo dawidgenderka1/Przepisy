@@ -66,13 +66,29 @@ public interface UserApiService {
 
 
     @POST("addRecipeIngredient")
-    Call<Void> addRecipeIngredient(@Body RecipeIngredientRequest recipeIngredientRequest);
+    Call<Void> addRecipeIngredient(@Body RecipeIngredientRequest recipeIngredientRequest, @Query("lang") String language);
 
     @GET("getIngredients")
-    Call<List<IngredientNameResponse>> getIngredients();
+    Call<List<IngredientNameResponse>> getIngredients(@Query("lang") String language);
 
-    @GET("/getIngredientsByRecipe/{recipeId}")
-    Call<List<Ingredient>> getIngredientsByRecipe(@Path("recipeId") int recipeId);
+    @GET("getIngredientsByRecipe/{recipeId}")
+    Call<List<Ingredient>> getIngredientsByRecipe(@Path("recipeId") int recipeId, @Query("lang") String language);
+
+    @GET("getIngredientIdsByRecipe/{recipeId}")
+    Call<List<Integer>> getIngredientIdsByRecipe(@Path("recipeId") int recipeId);
+
+    @GET("getIngredientName/{ingredientId}")
+    Call<IngredientNameResponse> getIngredientName(@Path("ingredientId") int ingredientId, @Query("lang") String language);
+
+    @GET("/getFavorites/{username}")
+    Call<List<Recipe>> getFavorites(@Path("username") String username);
+
+
+
+
+
+
+
 
 
 

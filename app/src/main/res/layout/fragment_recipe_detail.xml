@@ -60,6 +60,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"/>
 
+        <Button
+            android:id="@+id/addShoppingList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Zakupy"
+            android:layout_marginBottom="8dp"/>
+
         <TextView
             android:id="@+id/recipeCookingTime"
             android:layout_width="match_parent"

@@ -50,6 +50,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -71,6 +73,7 @@ public class RecipeDetailFragment extends Fragment {
     EditText commentEditText;
     Spinner ratingSpinner;
     Button sendCommentButton;
+    Button addShoppingButton;
     EditText noteEditText;
     Button saveNoteButton;
     View view;
@@ -105,6 +108,7 @@ public class RecipeDetailFragment extends Fragment {
         sendCommentButton = view.findViewById(R.id.sendCommentButton);
         noteEditText = view.findViewById(R.id.noteEditText);
         saveNoteButton = view.findViewById(R.id.saveNoteButton);
+        addShoppingButton = view.findViewById(R.id.addShoppingList);
 
         ratingSpinner = view.findViewById(R.id.ratingSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
@@ -172,6 +176,7 @@ public class RecipeDetailFragment extends Fragment {
             noteEditText.setVisibility(View.GONE);
             saveNoteButton.setVisibility(View.GONE);
             imageView.setVisibility(View.GONE);
+            addShoppingButton.setVisibility(View.GONE);
         }
         else{
             commentEditText.setVisibility(View.VISIBLE);
@@ -180,6 +185,7 @@ public class RecipeDetailFragment extends Fragment {
             noteEditText.setVisibility(View.VISIBLE);
             saveNoteButton.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.VISIBLE);
+            addShoppingButton.setVisibility(View.VISIBLE);
         }
 
 
@@ -233,13 +239,54 @@ public class RecipeDetailFragment extends Fragment {
 
 
 
+
+
         //int recipeId = getArguments().getInt("recipeId", -1);
         fetchAndSetRating(recipeid, SessionManager.getInstance(getContext()).getUsername());
         fetchAndSetNote(recipeid, SessionManager.getInstance(getContext()).getUsername());
         loadComments(recipeid, commentsRecyclerView);
         loadIngredients(recipeid, ingredientsRecyclerView);
 
+        addShoppingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchAndSaveIngredientIds(recipeid);
+                // Pobierz listę ID składników za pomocą SessionManager
+                List<Integer> ingredientIds = SessionManager.getInstance(getActivity()).getIngredientIds();
+
+// Przekształć listę ID na ciąg tekstowy
+                String idsText = ingredientIds.stream().map(Object::toString).collect(Collectors.joining(", "));
+
+// Wyświetl ciąg tekstowy jako Toast
+                Toast.makeText(getActivity(), "Zapisane ID składników: " + idsText, Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
+
+
         return view;
+    }
+
+    private void fetchAndSaveIngredientIds(int recipeId) {
+        UserApiService apiService = ApiClient.getUserService(); // Uzyskaj instancję twojego API
+        apiService.getIngredientIdsByRecipe(recipeId).enqueue(new Callback<List<Integer>>() {
+            @Override
+            public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Zapisz pobrane ID składników w SessionManager
+                    SessionManager.getInstance(getContext()).setIngredientIds(response.body());
+                } else {
+                    Log.e("TAG", "Nie udało się pobrać ID składników: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Integer>> call, Throwable t) {
+                Log.e("TAG", "Błąd połączenia", t);
+            }
+        });
     }
 
     private void scheduleNotification(Calendar selectedTime) {
@@ -320,8 +367,12 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void loadIngredients(int recipeId, RecyclerView ingredientsRecyclerView) {
+        // Pobranie aktualnego języka z SessionManagera
+        String currentLanguage = SessionManager.getInstance(getContext()).getLanguage();
+
+        // Wywołanie API z dodatkowym parametrem dla języka
         UserApiService apiService = ApiClient.getUserService();
-        apiService.getIngredientsByRecipe(recipeId).enqueue(new Callback<List<Ingredient>>() {
+        apiService.getIngredientsByRecipe(recipeId, currentLanguage).enqueue(new Callback<List<Ingredient>>() {
             @Override
             public void onResponse(Call<List<Ingredient>> call, Response<List<Ingredient>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -332,7 +383,7 @@ public class RecipeDetailFragment extends Fragment {
                         Log.e("RecipeDetailFragment", "Adapter nie jest zainicjalizowany");
                     }
                 } else {
-                    Log.e("RecipeDetailFragment", "Brak komentarzy lub błąd: " + response.message());
+                    Log.e("RecipeDetailFragment", "Brak składników lub błąd: " + response.message());
                 }
             }
 
@@ -342,6 +393,7 @@ public class RecipeDetailFragment extends Fragment {
             }
         });
     }
+
 
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -522,6 +574,9 @@ public class RecipeDetailFragment extends Fragment {
             }
         });
     }
+
+
+
 
 
 

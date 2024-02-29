@@ -13,6 +13,12 @@
     <action
         android:id="@+id/action_details"
         app:destination="@id/recipe_details" />
+        <action
+            android:id="@+id/action_details2"
+            app:destination="@id/shopping_list" />
+        <action
+            android:id="@+id/action_details3"
+            app:destination="@id/favourite_recipes" />
     </fragment>
 
     <fragment
@@ -40,4 +46,16 @@
         android:name="com.example.przepisy.ui.dashboard.RecipeDetailFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_recipe_detail" />
+
+    <fragment
+        android:id="@+id/shopping_list"
+        android:name="com.example.przepisy.ui.home.ShoppingListFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_shopping_list" />
+
+    <fragment
+        android:id="@+id/favourite_recipes"
+        android:name="com.example.przepisy.ui.home.FavouriteRecipesFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_favourite_recipes" />
 </navigation>

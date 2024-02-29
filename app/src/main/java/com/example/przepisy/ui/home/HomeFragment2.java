@@ -9,8 +9,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.przepisy.MainActivity;
+import com.example.przepisy.R;
 import com.example.przepisy.SessionManager;
 import com.example.przepisy.databinding.FragmentHome2Binding;
 import com.example.przepisy.databinding.FragmentHomeBinding;
@@ -43,6 +46,25 @@ public class HomeFragment2 extends Fragment {
                 }
             }
         });
+
+        binding.shoppingListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { // Zmieniono z 'v' na 'view' dla uniknięcia konfliktów
+                NavController navController = Navigation.findNavController(view); // Użyj 'view', aby uzyskać NavController
+                // Wykonaj akcję nawigacji
+                navController.navigate(R.id.action_details2); // Upewnij się, że `action_details2` prowadzi do ShoppingListFragment
+            }
+        });
+
+        binding.favouriteRecipesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { // Zmieniono z 'v' na 'view' dla uniknięcia konfliktów
+                NavController navController = Navigation.findNavController(view); // Użyj 'view', aby uzyskać NavController
+                // Wykonaj akcję nawigacji
+                navController.navigate(R.id.action_details3); // Upewnij się, że `action_details2` prowadzi do ShoppingListFragment
+            }
+        });
+
 
         return root;
     }
