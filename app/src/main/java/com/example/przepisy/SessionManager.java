@@ -22,6 +22,7 @@ public class SessionManager {
     private static final String LANGUAGE = "language"; // Dodane
     private static final String THEME = "theme"; // Dodane
     private static final String INGREDIENT_IDS = "ingredientIds";
+    private static final String FRIDGE_INGREDIENT_IDS = "fridgeIds";
 
 
 
@@ -114,6 +115,49 @@ public class SessionManager {
             setIngredientIds(ingredientIds);
         }
     }
+
+    public void setFridgeIngredientIds(List<Integer> ingredientIds) {
+        Gson gson = new Gson();
+        String json = gson.toJson(ingredientIds);
+        editor.putString(FRIDGE_INGREDIENT_IDS, json);
+        editor.apply();
+    }
+
+    // Dodaj metodę do odczytywania listy identyfikatorów składników
+    public List<Integer> getFridgeIngredientIds() {
+        Gson gson = new Gson();
+        String json = prefs.getString(FRIDGE_INGREDIENT_IDS, null);
+        Type type = new TypeToken<ArrayList<Integer>>() {}.getType();
+        List<Integer> ingredientIds = gson.fromJson(json, type);
+        return ingredientIds == null ? new ArrayList<>() : ingredientIds;
+    }
+
+    public void removeFridgeIngredientId(Integer ingredientId) {
+        // Pobierz aktualną listę identyfikatorów
+        List<Integer> ingredientIds = getFridgeIngredientIds();
+
+        // Usuń określony identyfikator, jeśli istnieje
+        if (ingredientIds.contains(ingredientId)) {
+            ingredientIds.remove(ingredientId);
+
+            // Zapisz zmodyfikowaną listę z powrotem
+            setFridgeIngredientIds(ingredientIds);
+        }
+    }
+
+    public void addFridgeIngredientId(Integer ingredientId) {
+        // Pobierz aktualną listę identyfikatorów
+        List<Integer> ingredientIds = getFridgeIngredientIds();
+
+        // Dodaj nowy identyfikator do listy, jeśli jeszcze nie istnieje
+        if (!ingredientIds.contains(ingredientId)) {
+            ingredientIds.add(ingredientId);
+
+            // Zapisz zmodyfikowaną listę z powrotem
+            setFridgeIngredientIds(ingredientIds);
+        }
+    }
+
 
 
     // Możesz dodać więcej metod do zarządzania sesją użytkownika

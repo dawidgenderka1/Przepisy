@@ -29,6 +29,7 @@ import com.example.przepisy.SessionManager;
 import com.example.przepisy.api.ApiClient;
 import com.example.przepisy.api.IngredientNameResponse;
 import com.example.przepisy.api.UserApiService;
+import com.example.przepisy.databinding.FragmentDashboard2Binding;
 import com.example.przepisy.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;

@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_details3"
             app:destination="@id/favourite_recipes" />
+        <action
+            android:id="@+id/action_details4"
+            app:destination="@id/fridge" />
     </fragment>
 
     <fragment
@@ -58,4 +61,31 @@
         android:name="com.example.przepisy.ui.home.FavouriteRecipesFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_favourite_recipes" />
+
+    <fragment
+        android:id="@+id/fridge"
+        android:name="com.example.przepisy.ui.home.FridgeFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_fridge">
+    <action
+        android:id="@+id/action_details5"
+        app:destination="@id/ingredient_recipe" />
+
+        <action
+            android:id="@+id/action_details6"
+            app:destination="@id/random_recipe" />
+</fragment>
+
+
+    <fragment
+        android:id="@+id/ingredient_recipe"
+        android:name="com.example.przepisy.ui.home.IngredientRecipeFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_ingredient_recipe" />
+
+    <fragment
+        android:id="@+id/random_recipe"
+        android:name="com.example.przepisy.ui.home.RandomRecipeFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_random_recipe" />
 </navigation>

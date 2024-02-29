@@ -1,5 +1,20 @@
-package com.example.przepisy.ui.dashboard;
+package com.example.przepisy.ui.home;
 
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.example.przepisy.R;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link RandomRecipeFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -40,6 +55,7 @@ import com.example.przepisy.NoteResponse;
 import com.example.przepisy.R;
 import com.example.przepisy.Rating;
 import com.example.przepisy.RatingResponse;
+import com.example.przepisy.Recipe;
 import com.example.przepisy.SessionManager;
 import com.example.przepisy.api.ApiClient;
 import com.example.przepisy.api.UserApiService;
@@ -57,7 +73,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RecipeDetailFragment extends Fragment {
+public class RandomRecipeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private int recipeid = -1;
@@ -79,11 +95,11 @@ public class RecipeDetailFragment extends Fragment {
     private View view;
     private ImageView imageView;
 
-    public RecipeDetailFragment() {
+    public RandomRecipeFragment() {
         // Required empty public constructor
     }
-    public static RecipeDetailFragment newInstance(String param1, String param2) {
-        RecipeDetailFragment fragment = new RecipeDetailFragment();
+    public static com.example.przepisy.ui.home.RandomRecipeFragment newInstance(String param1, String param2) {
+        com.example.przepisy.ui.home.RandomRecipeFragment fragment = new com.example.przepisy.ui.home.RandomRecipeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -103,7 +119,7 @@ public class RecipeDetailFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
+        view = inflater.inflate(R.layout.fragment_random_recipe, container, false);
         commentEditText = view.findViewById(R.id.commentEditText);
         sendCommentButton = view.findViewById(R.id.sendCommentButton);
         noteEditText = view.findViewById(R.id.noteEditText);
@@ -190,20 +206,27 @@ public class RecipeDetailFragment extends Fragment {
 
 
 
-        if (getArguments() != null) {
-            title = getArguments().getString("title");
-            recipeid = getArguments().getInt("recipeId");
-            description = getArguments().getString("description");
-            cookingTime = getArguments().getInt("cookingTime");
-            cuisineType = getArguments().getString("cuisineType");
-            instruction = getArguments().getString("instruction");
 
+        ArrayList<Recipe> recipesList = getArguments().getParcelableArrayList("recipesList");
+        if (recipesList != null && !recipesList.isEmpty()) {
+            // Przykład użycia pierwszego przepisu z listy
+            Recipe firstRecipe = recipesList.get(0); // lub użyj pętli, aby obsłużyć wszystkie przepisy
+            title = firstRecipe.getTitle();
+            recipeid = firstRecipe.getRecipeID();
+            description = firstRecipe.getDescription();
+            cookingTime = firstRecipe.getCookingTime();
+            cuisineType = firstRecipe.getCuisineType();
+            instruction = firstRecipe.getInstrukcja();
+            Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
+            // Użyj tych zmiennych do aktualizacji UI
             ((TextView) view.findViewById(R.id.recipeTitle)).setText(title);
             ((TextView) view.findViewById(R.id.recipeDescription)).setText(description);
             ((TextView) view.findViewById(R.id.recipeCookingTime)).setText(String.valueOf(cookingTime));
             ((TextView) view.findViewById(R.id.recipeCuisineType)).setText(cuisineType);
             ((TextView) view.findViewById(R.id.recipeInstruction)).setText(instruction);
         }
+
+
 
         checkIfRecipeIsFavorite(recipeid);
 

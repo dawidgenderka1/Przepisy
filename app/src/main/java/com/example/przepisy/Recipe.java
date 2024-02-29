@@ -1,7 +1,10 @@
 package com.example.przepisy;
 
 
-public class Recipe {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Recipe implements Parcelable {
 
     private int RecipeID;
 
@@ -80,5 +83,52 @@ public class Recipe {
     public double getSredniaOcena() {
         return SredniaOcena;
     }
+
+    protected Recipe(Parcel in) {
+        RecipeID = in.readInt();
+        UserID = in.readInt();
+        Title = in.readString();
+        Description = in.readString();
+        CookingTime = in.readInt();
+        CuisineType = in.readString();
+        SumaOcen = in.readInt();
+        LiczbaOcen = in.readInt();
+        SredniaOcena = in.readDouble();
+        Instrukcja = in.readString();
+        Username = in.readString(); // Przykład odczytu dodatkowego pola
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(RecipeID);
+        dest.writeInt(UserID);
+        dest.writeString(Title);
+        dest.writeString(Description);
+        dest.writeInt(CookingTime);
+        dest.writeString(CuisineType);
+        dest.writeInt(SumaOcen);
+        dest.writeInt(LiczbaOcen);
+        dest.writeDouble(SredniaOcena);
+        dest.writeString(Instrukcja);
+        dest.writeString(Username); // Przykład zapisu dodatkowego pola
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<Recipe> CREATOR = new Parcelable.Creator<Recipe>() {
+        @Override
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in);
+        }
+
+        @Override
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
+
 }
 

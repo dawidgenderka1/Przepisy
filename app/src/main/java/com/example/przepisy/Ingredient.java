@@ -13,6 +13,11 @@ public class Ingredient {
         this.Name = Name;
     }
 
+    public Ingredient()
+    {
+
+    }
+
     public int getIngredientID() {
         return IngredientID;
     }

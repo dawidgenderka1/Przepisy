@@ -6,6 +6,7 @@ import com.example.przepisy.FavouriteToggleRequest;
 import com.example.przepisy.FindRecipeIdRequest;
 import com.example.przepisy.FindRecipeIdResponse;
 import com.example.przepisy.Ingredient;
+import com.example.przepisy.IngredientIdResponse;
 import com.example.przepisy.Note;
 import com.example.przepisy.NoteResponse;
 import com.example.przepisy.Rating;
@@ -82,6 +83,17 @@ public interface UserApiService {
 
     @GET("/getFavorites/{username}")
     Call<List<Recipe>> getFavorites(@Path("username") String username);
+
+    @GET("/getIngredientId")
+    Call<IngredientIdResponse> getIngredientId(@Query("lang") String lang, @Query("name") String name);
+
+    @GET("/getRecipesUserCanCook")
+    Call<List<Recipe>> getRecipesUserCanCook(@Query("ingredientNames") String ingredientNames, @Query("lang") String language);
+
+
+
+
+
 
 
 
