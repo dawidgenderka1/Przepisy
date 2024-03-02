@@ -139,12 +139,12 @@ public class HomeFragment extends Fragment {
 
         // Sprawdź, czy hasła się zgadzają, i wykonaj rejestrację
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(getContext(), "Hasła się nie zgadzają.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Hasła się nie zgadzają", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!isValidEmail(email)) {
-            Toast.makeText(getContext(), "Błędny e-mail.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Błędny e-mail", Toast.LENGTH_SHORT).show();
             return;
         }
 

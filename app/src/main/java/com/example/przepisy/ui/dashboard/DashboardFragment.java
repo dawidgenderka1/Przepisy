@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.example.przepisy.R;
 import com.example.przepisy.Recipe;
 import com.example.przepisy.RecipesAdapter;
 import com.example.przepisy.SessionManager;
+import com.example.przepisy.SpacesItemDecoration;
 import com.example.przepisy.api.ApiClient;
 import com.example.przepisy.api.UserApiService;
 import com.example.przepisy.databinding.FragmentDashboardBinding;
@@ -47,6 +49,7 @@ public class DashboardFragment extends Fragment {
             public void onRecipeClick(Recipe recipe) {
                 // Tutaj możesz na przykład wyświetlić Toast z dodatkowymi informacjami
                 Log.d("55", "index=");
+                binding.fabAddRecipe.setVisibility(View.GONE);
             }
 
 
@@ -62,6 +65,8 @@ public class DashboardFragment extends Fragment {
 
         binding.recipesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recipesRecyclerView.setAdapter(adapter);
+        int spaceInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+        binding.recipesRecyclerView.addItemDecoration(new SpacesItemDecoration(spaceInPixels));
 
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
             // Użytkownik nie jest zalogowany, ukryj EditText i Button

@@ -6,17 +6,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.przepisy.FindRecipeIdRequest;
@@ -26,6 +32,7 @@ import com.example.przepisy.Recipe;
 import com.example.przepisy.RecipeIngredientRequest;
 import com.example.przepisy.RecipesAdapter;
 import com.example.przepisy.SessionManager;
+import com.example.przepisy.SpacesItemDecoration;
 import com.example.przepisy.api.ApiClient;
 import com.example.przepisy.api.IngredientNameResponse;
 import com.example.przepisy.api.UserApiService;
@@ -35,6 +42,8 @@ import com.example.przepisy.databinding.FragmentDashboardBinding;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,17 +52,47 @@ import retrofit2.Response;
 public class DashboardFragment2 extends Fragment {
 
     private FragmentDashboardBinding binding;
+    private int help=0;
+    private Bundle bundle = new Bundle();
+    private View root;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        root = binding.getRoot();
 
         Spinner spinnerCuisineType = root.findViewById(R.id.spinnerCuisineType);
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getContext(),
                 R.array.cuisine_types, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCuisineType.setAdapter(adapter2);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                // Logika nawigacji, co robić po naciśnięciu przycisku cofnij
+                if(help==1)
+                {
+                    binding.formCreateRecipe.setVisibility(View.GONE);
+                    binding.fabAddRecipe.setVisibility(View.VISIBLE);
+                    binding.listOfRecipes.setVisibility(View.VISIBLE);
+                    binding.recipesRecyclerView.setVisibility(View.VISIBLE);
+                    help=0;
+
+                }
+
+            }
+        };
+
+        // Rejestrujemy callback w Dispatcherze przycisku cofnij, który jest powiązany z cyklem życia widoku fragmentu
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
+
+
+
+
 
 
 
@@ -63,6 +102,7 @@ public class DashboardFragment2 extends Fragment {
             public void onRecipeClick(Recipe recipe) {
                 // Tutaj możesz na przykład wyświetlić Toast z dodatkowymi informacjami
                 Log.d("55", "index=");
+                binding.fabAddRecipe.setVisibility(View.GONE);
             }
             @Override
             public void onHideRecyclerView() {
@@ -72,6 +112,8 @@ public class DashboardFragment2 extends Fragment {
 
         binding.recipesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recipesRecyclerView.setAdapter(adapter);
+        int spaceInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+        binding.recipesRecyclerView.addItemDecoration(new SpacesItemDecoration(spaceInPixels));
 
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
             // Użytkownik nie jest zalogowany, ukryj EditText i Button
@@ -81,20 +123,27 @@ public class DashboardFragment2 extends Fragment {
             binding.fabAddRecipe.setVisibility(View.VISIBLE);
         }
 
-        Toast.makeText(getContext(), "hmmmmm", Toast.LENGTH_SHORT).show();
+
 
         loadRecipes(); // Asynchroniczne ładowanie danych
 
         binding.fabAddRecipe.setOnClickListener(view -> {
             // Ukryj RecyclerView i pokaż formularz
             binding.recipesRecyclerView.setVisibility(View.GONE);
+            binding.listOfRecipes.setVisibility(View.GONE);
+            binding.fabAddRecipe.setVisibility(View.GONE);
             binding.formCreateRecipe.setVisibility(View.VISIBLE);
+
+            help=1;
         });
 
         binding.buttonReturn.setOnClickListener(view -> {
             // Ukryj formularz i pokaż RecyclerView
             binding.formCreateRecipe.setVisibility(View.GONE);
+            binding.fabAddRecipe.setVisibility(View.VISIBLE);
+            binding.listOfRecipes.setVisibility(View.VISIBLE);
             binding.recipesRecyclerView.setVisibility(View.VISIBLE);
+            help=0;
         });
 
         binding.confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +152,8 @@ public class DashboardFragment2 extends Fragment {
                 submitRecipe();
             }
         });
+
+
 
         binding.addIngredientButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +170,7 @@ public class DashboardFragment2 extends Fragment {
         // Stwórz nowy widok składnika z 'ingredient_item.xml'
         View ingredientView = LayoutInflater.from(getContext()).inflate(R.layout.ingredient_item, null, false);
         Spinner ingredientNameSpinner = ingredientView.findViewById(R.id.ingredientNameSpinner);
-        Button deleteButton = ingredientView.findViewById(R.id.removeIngredientButton);
+        ImageView deleteButton = ingredientView.findViewById(R.id.removeIngredientButton);
 
         // Ustaw OnClickListener dla przycisku "Usuń"
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -155,6 +206,13 @@ public class DashboardFragment2 extends Fragment {
             }
         });
 
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        // Na przykład, dodaj margines dolny 8dp
+        int marginInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+        layoutParams.setMargins(0, 0, 0, marginInPixels);
+        ingredientView.setLayoutParams(layoutParams);
+
         // Dodaj widok składnika do ingredientsContainer
         binding.ingredientsContainer.addView(ingredientView);
     }
@@ -189,7 +247,7 @@ public class DashboardFragment2 extends Fragment {
     private void submitRecipe() {
         String title = binding.editTextRecipeTitle.getText().toString();
         String description = binding.editTextRecipeDescription.getText().toString();
-        int cookingTime;
+        int cookingTime=0;
 
         String username = SessionManager.getInstance(getContext()).getUsername();
         try {
@@ -202,6 +260,8 @@ public class DashboardFragment2 extends Fragment {
 
         Recipe newRecipe = new Recipe(username, title, description, cookingTime, cuisineType, instructions);
 
+        final int cookingTime2 = cookingTime;
+
         UserApiService apiService = ApiClient.getUserService();
         Call<Void> call = apiService.addRecipe(newRecipe);
         call.enqueue(new Callback<Void>() {
@@ -210,10 +270,12 @@ public class DashboardFragment2 extends Fragment {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Przepis dodany pomyślnie", Toast.LENGTH_SHORT).show();
                     // Opcjonalnie: schowaj formularz i odśwież listę przepisów
-
+                    findRecipeIdAndAddIngredients(username,title,description,cookingTime2,cuisineType,instructions);
                     binding.formCreateRecipe.setVisibility(View.GONE);
                     binding.recipesRecyclerView.setVisibility(View.VISIBLE);
                     //loadRecipes();
+
+
                 } else {
                     Toast.makeText(getContext(), "Nie udało się dodać przepisu", Toast.LENGTH_SHORT).show();
                 }
@@ -225,10 +287,10 @@ public class DashboardFragment2 extends Fragment {
             }
         });
 
-        findRecipeIdAndAddIngredients(username,title,description);
+        //findRecipeIdAndAddIngredients(username,title,description);
     }
 
-    private void findRecipeIdAndAddIngredients(String username, String title, String description) {
+    private void findRecipeIdAndAddIngredients(String username, String title, String description, int cookingTime, String cuisineType, String instructions) {
         UserApiService apiService = ApiClient.getUserService();
         //Log.e("testetesttetst", username+title+description);
         FindRecipeIdRequest request = new FindRecipeIdRequest(username, title, description);
@@ -239,6 +301,22 @@ public class DashboardFragment2 extends Fragment {
                     int recipeId = response.body().getRecipeID(); // Załóżmy, że getRecipeId() zwraca int
                     // Teraz, gdy masz recipeId, możesz dodać składniki
                     addRecipeIngredient(recipeId);
+                    RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+                    bundle.putString("title", title);
+                    bundle.putString("description", description);
+                    bundle.putInt("recipeId", recipeId);
+                    bundle.putInt("cookingTime", cookingTime);
+                    bundle.putString("cuisineType", cuisineType);
+                    bundle.putString("instruction", instructions);
+                    bundle.putDouble("SredniaOcena", 0.0);
+                    recipeDetailFragment.setArguments(bundle);
+
+
+                    NavController navController = Navigation.findNavController(root);
+                    navController.navigate(R.id.action_details, bundle);;
+
+
+
                 } else {
                     Log.e("findRecipeId", "Nie udało się znaleźć przepisu");
                 }

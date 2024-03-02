@@ -74,6 +74,15 @@ public class HomeFragment2 extends Fragment {
             }
         });
 
+        binding.yourRecipesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { // Zmieniono z 'v' na 'view' dla uniknięcia konfliktów
+                NavController navController = Navigation.findNavController(view); // Użyj 'view', aby uzyskać NavController
+                // Wykonaj akcję nawigacji
+                navController.navigate(R.id.action_details5); // Upewnij się, że `action_details2` prowadzi do ShoppingListFragment
+            }
+        });
+
 
         return root;
     }

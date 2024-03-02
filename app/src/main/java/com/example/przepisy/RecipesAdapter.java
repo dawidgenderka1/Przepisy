@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.przepisy.ui.dashboard.RecipeDetailFragment;
@@ -56,13 +58,20 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
                 bundle.putString("cuisineType", recipe.getCuisineType());
                 bundle.putString("instruction", recipe.getInstrukcja());
                 bundle.putInt("recipeId", recipe.getRecipeID());
+                bundle.putDouble("SredniaOcena", recipe.getSredniaOcena());
                 recipeDetailFragment.setArguments(bundle);
 
-                // Przełącz fragment
-                ((FragmentActivity)view.getContext()).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, recipeDetailFragment)
-                        .addToBackStack(null) // Aby umożliwić powrót do poprzedniego fragmentu
-                        .commit();
+                try {
+                    NavController navController = Navigation.findNavController(view);
+                    navController.navigate(R.id.action_details, bundle);
+                }catch(Exception e) {
+
+                    //Przełącz fragment
+                    ((FragmentActivity)view.getContext()).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, recipeDetailFragment)
+                            .addToBackStack(null) // Aby umożliwić powrót do poprzedniego fragmentu
+                           .commit();
+                }
             }
         });
     }

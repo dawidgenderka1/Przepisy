@@ -2,12 +2,16 @@ package com.example.przepisy.ui.home;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.przepisy.CheckOwnershipResponse;
+import com.example.przepisy.FindRecipeIdRequest;
+import com.example.przepisy.FindRecipeIdResponse;
 import com.example.przepisy.R;
 
 /**
@@ -25,6 +29,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,7 +86,7 @@ public class RandomRecipeFragment extends Fragment {
     private String title;
     private String description;
     int cookingTime;
-    private String cuisineType;
+    private double cuisineType;
     private String instruction;
     private String mParam1;
     private String mParam2;
@@ -88,12 +94,13 @@ public class RandomRecipeFragment extends Fragment {
     private RecyclerView ingredientsRecyclerView;
     private EditText commentEditText;
     private Spinner ratingSpinner;
-    private Button sendCommentButton;
-    private Button addShoppingButton;
+    private ImageView sendCommentButton;
+    private ImageView addShoppingButton;
     private EditText noteEditText;
-    private Button saveNoteButton;
+    private ImageView saveNoteButton;
     private View view;
     private ImageView imageView;
+    private ImageView deleteRecipe;
 
     public RandomRecipeFragment() {
         // Required empty public constructor
@@ -125,12 +132,37 @@ public class RandomRecipeFragment extends Fragment {
         noteEditText = view.findViewById(R.id.noteEditText);
         saveNoteButton = view.findViewById(R.id.saveNoteButton);
         addShoppingButton = view.findViewById(R.id.addShoppingList);
+        deleteRecipe = view.findViewById(R.id.deleteRecipe);
 
         ratingSpinner = view.findViewById(R.id.ratingSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.rating_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ratingSpinner.setAdapter(adapter);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.action_details7);
+
+
+            }
+        };
+
+        deleteRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Sprawdź, który obrazek jest obecnie ustawiony
+                deleteRecipe(SessionManager.getInstance(getContext()).getUsername(),title, description);
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.action_details10);
+            }
+        });
+
+        // Rejestrujemy callback w Dispatcherze przycisku cofnij, który jest powiązany z cyklem życia widoku fragmentu
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         ratingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -148,7 +180,7 @@ public class RandomRecipeFragment extends Fragment {
             }
         });
 
-        Button buttonSetAlarm = view.findViewById(R.id.button_set_alarm);
+        ImageView buttonSetAlarm = view.findViewById(R.id.button_set_alarm);
         buttonSetAlarm.setOnClickListener(v -> {
             Calendar currentTime = Calendar.getInstance();
             int hour = currentTime.get(Calendar.HOUR_OF_DAY);
@@ -173,11 +205,11 @@ public class RandomRecipeFragment extends Fragment {
                 // Sprawdź, który obrazek jest obecnie ustawiony
                 if (imageView.getTag() != null && imageView.getTag().equals("full")) {
                     // Jeśli serce jest pełne, zmień na puste
-                    imageView.setImageResource(R.drawable.heart_empty);
+                    imageView.setImageResource(R.drawable.baseline_favorite_border_24);
                     imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
                 } else {
                     // Jeśli serce jest puste, zmień na pełne
-                    imageView.setImageResource(R.drawable.heart_full);
+                    imageView.setImageResource(R.drawable.baseline_favorite_24);
                     imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
                 }
                 toggleFavorite(recipeid);
@@ -215,14 +247,14 @@ public class RandomRecipeFragment extends Fragment {
             recipeid = firstRecipe.getRecipeID();
             description = firstRecipe.getDescription();
             cookingTime = firstRecipe.getCookingTime();
-            cuisineType = firstRecipe.getCuisineType();
+            cuisineType = firstRecipe.getSredniaOcena();
             instruction = firstRecipe.getInstrukcja();
             Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
             // Użyj tych zmiennych do aktualizacji UI
             ((TextView) view.findViewById(R.id.recipeTitle)).setText(title);
             ((TextView) view.findViewById(R.id.recipeDescription)).setText(description);
             ((TextView) view.findViewById(R.id.recipeCookingTime)).setText(String.valueOf(cookingTime));
-            ((TextView) view.findViewById(R.id.recipeCuisineType)).setText(cuisineType);
+            ((TextView) view.findViewById(R.id.recipeCuisineType)).setText(String.valueOf(cuisineType));
             ((TextView) view.findViewById(R.id.recipeInstruction)).setText(instruction);
         }
 
@@ -258,6 +290,8 @@ public class RandomRecipeFragment extends Fragment {
         // Ustawienie pustego adaptera
         ingredientsRecyclerView.setAdapter(new IngredientsAdapter(new ArrayList<>()));
 
+        checkRecipeOwnership(SessionManager.getInstance(getContext()).getUsername(),recipeid);
+
 
 
 
@@ -281,7 +315,7 @@ public class RandomRecipeFragment extends Fragment {
                 String idsText = ingredientIds.stream().map(Object::toString).collect(Collectors.joining(", "));
 
 // Wyświetl ciąg tekstowy jako Toast
-                Toast.makeText(getActivity(), "Zapisane ID składników: " + idsText, Toast.LENGTH_LONG).show();
+
 
             }
         });
@@ -308,6 +342,57 @@ public class RandomRecipeFragment extends Fragment {
             @Override
             public void onFailure(Call<List<Integer>> call, Throwable t) {
                 Log.e("TAG", "Błąd połączenia", t);
+            }
+        });
+    }
+
+    private void checkRecipeOwnership(String username, int recipeId) {
+        UserApiService apiService = ApiClient.getUserService();
+        apiService.checkRecipeOwnership(username,recipeId).enqueue(new Callback<CheckOwnershipResponse>() {
+            @Override
+            public void onResponse(Call<CheckOwnershipResponse> call, Response<CheckOwnershipResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    boolean belongsToUser = response.body().isBelongsToUser();
+
+                    if (belongsToUser) {
+                        deleteRecipe.setVisibility(View.VISIBLE);
+                    } else {
+                        // Ukryj przycisk
+                        deleteRecipe.setVisibility(View.GONE);
+                    }
+                } else {
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckOwnershipResponse> call, Throwable t) {
+                // Obsługa błędu połączenia
+            }
+        });
+
+    }
+
+
+    private void deleteRecipe(String username, String title, String description) {
+        UserApiService apiService = ApiClient.getUserService();
+        //Log.e("testetesttetst", username+title+description);
+        FindRecipeIdRequest request = new FindRecipeIdRequest(username, title, description);
+        apiService.deleteRecipe(request).enqueue(new Callback<FindRecipeIdResponse>() {
+            @Override
+            public void onResponse(Call<FindRecipeIdResponse> call, Response<FindRecipeIdResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+
+                } else {
+                    Log.e("findRecipeId", "Nie udało się znaleźć przepisu");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FindRecipeIdResponse> call, Throwable t) {
+                Log.e("findRecipeId", "Błąd połączenia: " + t.getMessage());
             }
         });
     }
@@ -576,12 +661,12 @@ public class RandomRecipeFragment extends Fragment {
                     if (isFavorite) {
                         // Przepis jest w ulubionych
                         Log.d("CheckFavorite", "Przepis jest dodany do ulubionych.");
-                        imageView.setImageResource(R.drawable.heart_full);
+                        imageView.setImageResource(R.drawable.baseline_favorite_24);
                         imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
                     } else {
                         // Przepis nie jest w ulubionych
                         Log.d("CheckFavorite", "Przepis nie jest dodany do ulubionych.");
-                        imageView.setImageResource(R.drawable.heart_empty);
+                        imageView.setImageResource(R.drawable.baseline_favorite_border_24);
                         imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
                     }
                 } else {

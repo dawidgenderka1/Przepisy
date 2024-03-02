@@ -1,6 +1,8 @@
 package com.example.przepisy.api;
 
 import com.example.przepisy.CheckFavouriteResponse;
+import com.example.przepisy.CheckOwnershipRequest;
+import com.example.przepisy.CheckOwnershipResponse;
 import com.example.przepisy.Comment;
 import com.example.przepisy.FavouriteToggleRequest;
 import com.example.przepisy.FindRecipeIdRequest;
@@ -65,6 +67,14 @@ public interface UserApiService {
     @POST("findRecipeId")
     Call<FindRecipeIdResponse> findRecipeId(@Body FindRecipeIdRequest request);
 
+    @POST("deleteRecipe")
+    Call<FindRecipeIdResponse> deleteRecipe(@Body FindRecipeIdRequest request);
+
+    @GET("checkRecipeOwnership/{username}/{recipeId}")
+    Call<CheckOwnershipResponse> checkRecipeOwnership(@Path("username") String username, @Path("recipeId") int recipeId);
+
+
+
 
     @POST("addRecipeIngredient")
     Call<Void> addRecipeIngredient(@Body RecipeIngredientRequest recipeIngredientRequest, @Query("lang") String language);
@@ -83,6 +93,9 @@ public interface UserApiService {
 
     @GET("/getFavorites/{username}")
     Call<List<Recipe>> getFavorites(@Path("username") String username);
+
+    @GET("/getUserRecipes/{username}")
+    Call<List<Recipe>> getUserRecipes(@Path("username") String username);
 
     @GET("/getIngredientId")
     Call<IngredientIdResponse> getIngredientId(@Query("lang") String lang, @Query("name") String name);

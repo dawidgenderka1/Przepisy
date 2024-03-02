@@ -8,8 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,9 +32,13 @@ import android.widget.Toast;
 
 import com.example.przepisy.AlarmReceiver;
 import com.example.przepisy.CheckFavouriteResponse;
+import com.example.przepisy.CheckOwnershipRequest;
+import com.example.przepisy.CheckOwnershipResponse;
 import com.example.przepisy.Comment;
 import com.example.przepisy.CommentsAdapter;
 import com.example.przepisy.FavouriteToggleRequest;
+import com.example.przepisy.FindRecipeIdRequest;
+import com.example.przepisy.FindRecipeIdResponse;
 import com.example.przepisy.Ingredient;
 import com.example.przepisy.IngredientsAdapter;
 import com.example.przepisy.MainActivity;
@@ -63,6 +70,7 @@ public class RecipeDetailFragment extends Fragment {
     private int recipeid = -1;
     private String title;
     private String description;
+    private Double SredniaOcena;
     int cookingTime;
     private String cuisineType;
     private String instruction;
@@ -72,12 +80,15 @@ public class RecipeDetailFragment extends Fragment {
     private RecyclerView ingredientsRecyclerView;
     private EditText commentEditText;
     private Spinner ratingSpinner;
-    private Button sendCommentButton;
-    private Button addShoppingButton;
+    private ImageView sendCommentButton;
+    private ImageView addShoppingButton;
     private EditText noteEditText;
-    private Button saveNoteButton;
+    private ImageView saveNoteButton;
     private View view;
     private ImageView imageView;
+    private ImageView deleteRecipe;
+    private TextView noteTitle;
+    private TextView commentTitle;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -109,6 +120,21 @@ public class RecipeDetailFragment extends Fragment {
         noteEditText = view.findViewById(R.id.noteEditText);
         saveNoteButton = view.findViewById(R.id.saveNoteButton);
         addShoppingButton = view.findViewById(R.id.addShoppingList);
+        deleteRecipe = view.findViewById(R.id.deleteRecipe);
+        noteTitle = view.findViewById(R.id.noteTitle);
+        commentTitle = view.findViewById(R.id.commentTitle);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.action_details10);
+
+
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         ratingSpinner = view.findViewById(R.id.ratingSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
@@ -132,7 +158,7 @@ public class RecipeDetailFragment extends Fragment {
             }
         });
 
-        Button buttonSetAlarm = view.findViewById(R.id.button_set_alarm);
+        ImageView buttonSetAlarm = view.findViewById(R.id.button_set_alarm);
         buttonSetAlarm.setOnClickListener(v -> {
             Calendar currentTime = Calendar.getInstance();
             int hour = currentTime.get(Calendar.HOUR_OF_DAY);
@@ -157,11 +183,11 @@ public class RecipeDetailFragment extends Fragment {
                 // Sprawdź, który obrazek jest obecnie ustawiony
                 if (imageView.getTag() != null && imageView.getTag().equals("full")) {
                     // Jeśli serce jest pełne, zmień na puste
-                    imageView.setImageResource(R.drawable.heart_empty);
+                    imageView.setImageResource(R.drawable.baseline_favorite_border_24);
                     imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
                 } else {
                     // Jeśli serce jest puste, zmień na pełne
-                    imageView.setImageResource(R.drawable.heart_full);
+                    imageView.setImageResource(R.drawable.baseline_favorite_24);
                     imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
                 }
                 toggleFavorite(recipeid);
@@ -177,6 +203,9 @@ public class RecipeDetailFragment extends Fragment {
             saveNoteButton.setVisibility(View.GONE);
             imageView.setVisibility(View.GONE);
             addShoppingButton.setVisibility(View.GONE);
+            noteTitle.setVisibility(View.GONE);
+            commentTitle.setVisibility(View.GONE);
+            //deleteRecipe.setVisibility(View.GONE);
         }
         else{
             commentEditText.setVisibility(View.VISIBLE);
@@ -186,6 +215,9 @@ public class RecipeDetailFragment extends Fragment {
             saveNoteButton.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.VISIBLE);
             addShoppingButton.setVisibility(View.VISIBLE);
+            noteTitle.setVisibility(View.VISIBLE);
+            commentTitle.setVisibility(View.VISIBLE);
+            //deleteRecipe.setVisibility(View.VISIBLE);
         }
 
 
@@ -197,15 +229,28 @@ public class RecipeDetailFragment extends Fragment {
             cookingTime = getArguments().getInt("cookingTime");
             cuisineType = getArguments().getString("cuisineType");
             instruction = getArguments().getString("instruction");
+            SredniaOcena = getArguments().getDouble("SredniaOcena");
 
             ((TextView) view.findViewById(R.id.recipeTitle)).setText(title);
             ((TextView) view.findViewById(R.id.recipeDescription)).setText(description);
-            ((TextView) view.findViewById(R.id.recipeCookingTime)).setText(String.valueOf(cookingTime));
-            ((TextView) view.findViewById(R.id.recipeCuisineType)).setText(cuisineType);
+            ((TextView) view.findViewById(R.id.recipeCookingTime)).setText("Średni czas przygotowania to "+String.valueOf(cookingTime)+" minut.");
+            ((TextView) view.findViewById(R.id.recipeCuisineType)).setText(String.valueOf(SredniaOcena));
             ((TextView) view.findViewById(R.id.recipeInstruction)).setText(instruction);
+
+
         }
 
         checkIfRecipeIsFavorite(recipeid);
+
+        deleteRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Sprawdź, który obrazek jest obecnie ustawiony
+                deleteRecipe(SessionManager.getInstance(getContext()).getUsername(),title, description);
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.action_details10);
+            }
+        });
 
         sendCommentButton.setOnClickListener(v -> {
             String commentText = commentEditText.getText().toString();
@@ -235,6 +280,8 @@ public class RecipeDetailFragment extends Fragment {
         // Ustawienie pustego adaptera
         ingredientsRecyclerView.setAdapter(new IngredientsAdapter(new ArrayList<>()));
 
+        checkRecipeOwnership(SessionManager.getInstance(getContext()).getUsername(),recipeid);
+
 
 
 
@@ -258,7 +305,7 @@ public class RecipeDetailFragment extends Fragment {
                 String idsText = ingredientIds.stream().map(Object::toString).collect(Collectors.joining(", "));
 
 // Wyświetl ciąg tekstowy jako Toast
-                Toast.makeText(getActivity(), "Zapisane ID składników: " + idsText, Toast.LENGTH_LONG).show();
+
 
             }
         });
@@ -275,8 +322,28 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Zapisz pobrane ID składników w SessionManager
-                    SessionManager.getInstance(getContext()).setIngredientIds(response.body());
+                    // Pobierz aktualną listę ID składników
+                    List<Integer> currentIds = SessionManager.getInstance(getContext()).getFridgeIngredientIds();
+                    List<Integer> currentIds2 = SessionManager.getInstance(getContext()).getIngredientIds();
+                    List<Integer> newIds = response.body();
+
+                    // Sprawdź, czy pobrane ID składników już się znajduje w zapisanej liście
+                    boolean isUpdated = false;
+                    for (Integer newId : newIds) {
+                        if (!currentIds.contains(newId)) {
+                            if (!currentIds2.contains(newId)) {
+                                currentIds2.add(newId); // Dodaj nowe ID, jeśli go jeszcze nie ma
+                                isUpdated = true;
+                            }
+                        }
+                    }
+
+
+                    // Zaktualizuj zapisane ID składników, jeśli lista została zmodyfikowana
+                    if (isUpdated) {
+                        SessionManager.getInstance(getContext()).setIngredientIds(currentIds2);
+                        Toast.makeText(getActivity(), "Dodano do listy zakupów.", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Log.e("TAG", "Nie udało się pobrać ID składników: " + response.message());
                 }
@@ -289,6 +356,57 @@ public class RecipeDetailFragment extends Fragment {
         });
     }
 
+    private void checkRecipeOwnership(String username, int recipeId) {
+        UserApiService apiService = ApiClient.getUserService();
+        apiService.checkRecipeOwnership(username,recipeId).enqueue(new Callback<CheckOwnershipResponse>() {
+            @Override
+            public void onResponse(Call<CheckOwnershipResponse> call, Response<CheckOwnershipResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    boolean belongsToUser = response.body().isBelongsToUser();
+
+                    if (belongsToUser) {
+                        deleteRecipe.setVisibility(View.VISIBLE);
+                                        } else {
+                                            // Ukryj przycisk
+                                            deleteRecipe.setVisibility(View.GONE);
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckOwnershipResponse> call, Throwable t) {
+                // Obsługa błędu połączenia
+            }
+        });
+
+    }
+
+
+    private void deleteRecipe(String username, String title, String description) {
+        UserApiService apiService = ApiClient.getUserService();
+        //Log.e("testetesttetst", username+title+description);
+        FindRecipeIdRequest request = new FindRecipeIdRequest(username, title, description);
+        apiService.deleteRecipe(request).enqueue(new Callback<FindRecipeIdResponse>() {
+            @Override
+            public void onResponse(Call<FindRecipeIdResponse> call, Response<FindRecipeIdResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+
+                } else {
+                    Log.e("findRecipeId", "Nie udało się znaleźć przepisu");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FindRecipeIdResponse> call, Throwable t) {
+                Log.e("findRecipeId", "Błąd połączenia: " + t.getMessage());
+            }
+        });
+    }
+
+
     private void scheduleNotification(Calendar selectedTime) {
         Intent intent = new Intent(getActivity().getApplicationContext(), AlarmReceiver.class);
         intent.putExtra("title", title);
@@ -297,6 +415,7 @@ public class RecipeDetailFragment extends Fragment {
         intent.putExtra("cuisineType", cuisineType);
         intent.putExtra("cookingTime", cookingTime);
         intent.putExtra("instruction", instruction);
+        intent.putExtra("SredniaOcena", SredniaOcena);
         // Możesz dodać dodatkowe dane do Intentu, jeśli chcesz przekazać do powiadomienia
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -457,7 +576,7 @@ public class RecipeDetailFragment extends Fragment {
                     noteEditText.setText(noteText);
                 } else {
                     // Jeśli notatka nie istnieje lub jest błąd, ustaw puste pole
-                    noteEditText.setText("błąd");
+                    noteEditText.setText("");
                 }
             }
 
@@ -488,7 +607,7 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Notatka została dodany", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Notatka została dodana", Toast.LENGTH_SHORT).show();
                     hideKeyboardFrom(getContext(), view);
 
                     // Możesz odświeżyć listę komentarzy itd.
@@ -553,12 +672,12 @@ public class RecipeDetailFragment extends Fragment {
                     if (isFavorite) {
                         // Przepis jest w ulubionych
                         Log.d("CheckFavorite", "Przepis jest dodany do ulubionych.");
-                        imageView.setImageResource(R.drawable.heart_full);
+                        imageView.setImageResource(R.drawable.baseline_favorite_24);
                         imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
                     } else {
                         // Przepis nie jest w ulubionych
                         Log.d("CheckFavorite", "Przepis nie jest dodany do ulubionych.");
-                        imageView.setImageResource(R.drawable.heart_empty);
+                        imageView.setImageResource(R.drawable.baseline_favorite_border_24);
                         imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
                     }
                 } else {

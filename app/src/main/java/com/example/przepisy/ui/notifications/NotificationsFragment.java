@@ -1,6 +1,9 @@
 package com.example.przepisy.ui.notifications;
 
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +20,12 @@ import com.example.przepisy.R;
 import com.example.przepisy.SessionManager;
 import com.example.przepisy.databinding.FragmentNotificationsBinding;
 
+import java.util.Locale;
+
 public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
+    private int y = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -54,8 +60,13 @@ public class NotificationsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selectedLanguage = parentView.getItemAtPosition(position).toString();
                 SessionManager.getInstance(getContext()).setLanguage(selectedLanguage);
-                // Tutaj można dodać logikę zmiany języka w aplikacji
-
+                String languageCode = mapLanguageToCode(selectedLanguage);
+                Locale locale = new Locale(languageCode);
+                y=y+1;
+                if(y == 2)
+                {
+                    updateLocale(locale);
+                }
             }
 
             @Override
@@ -84,9 +95,7 @@ public class NotificationsFragment extends Fragment {
                 String selectedTheme = parentView.getItemAtPosition(position).toString();
                 SessionManager.getInstance(getContext()).setTheme(selectedTheme);
                 // Tutaj można dodać logikę zmiany motywu w aplikacji
-                if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).reloadActivity();
-                }
+
             }
 
             @Override
@@ -95,6 +104,28 @@ public class NotificationsFragment extends Fragment {
             }
         });
     }
+
+    public void updateLocale(Locale newLocale) {
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = newLocale;
+        res.updateConfiguration(conf, dm);
+        //Intent intent = new Intent(getActivity(), MainActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //startActivity(intent);
+    }
+
+    private String mapLanguageToCode(String languageName) {
+        switch (languageName) {
+            case "Język polski":
+                return "pl"; // Kod języka dla polskiego
+            // Angielski zostanie pominięty, aby korzystać z domyślnych zasobów z folderu `values`
+            default:
+                return ""; // Nie ustawiamy języka, korzystamy z domyślnych zasobów
+        }
+    }
+
 
     @Override
     public void onDestroyView() {

@@ -2,10 +2,14 @@ package com.example.przepisy.ui.home;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,7 @@ import com.example.przepisy.R;
 import com.example.przepisy.Recipe;
 import com.example.przepisy.RecipesAdapter;
 import com.example.przepisy.SessionManager;
+import com.example.przepisy.SpacesItemDecoration;
 import com.example.przepisy.api.ApiClient;
 import com.example.przepisy.api.UserApiService;
 import com.example.przepisy.databinding.FragmentDashboardBinding;
@@ -65,6 +70,18 @@ public class IngredientRecipeFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                NavController navController = Navigation.findNavController(root);
+                navController.navigate(R.id.action_details9);
+
+
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
         if (getArguments() != null) {
             ingredientNames = getArguments().getStringArrayList("ingredientNames");
             ingredientsText = new StringBuilder();
@@ -99,6 +116,10 @@ public class IngredientRecipeFragment extends Fragment {
 
         binding.recipesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recipesRecyclerView.setAdapter(adapter);
+        int spaceInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+        binding.recipesRecyclerView.addItemDecoration(new SpacesItemDecoration(spaceInPixels));
+
+
 
 
 
@@ -115,6 +136,7 @@ public class IngredientRecipeFragment extends Fragment {
             binding.recipesRecyclerView.setVisibility(View.VISIBLE);
         }
     }
+
 
     private void loadRecipes() {
         UserApiService apiService = ApiClient.getUserService();
@@ -140,6 +162,8 @@ public class IngredientRecipeFragment extends Fragment {
             }
         });
     }
+
+
 
 
 }

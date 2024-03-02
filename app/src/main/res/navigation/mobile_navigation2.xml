@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_details4"
             app:destination="@id/fridge" />
+        <action
+            android:id="@+id/action_details5"
+            app:destination="@id/user_recipe" />
     </fragment>
 
     <fragment
@@ -48,19 +51,33 @@
         android:id="@+id/recipe_details"
         android:name="com.example.przepisy.ui.dashboard.RecipeDetailFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_recipe_detail" />
+        tools:layout="@layout/fragment_recipe_detail" >
+    <action
+        android:id="@+id/action_details10"
+        app:destination="@id/navigation_dashboard2" />
+        <action
+            android:id="@+id/action_details"
+            app:destination="@id/recipe_details" /></fragment>
 
     <fragment
         android:id="@+id/shopping_list"
         android:name="com.example.przepisy.ui.home.ShoppingListFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_shopping_list" />
+        tools:layout="@layout/fragment_shopping_list" >
+        <action
+            android:id="@+id/action_details"
+            app:destination="@id/recipe_details" />
+    </fragment>
 
     <fragment
         android:id="@+id/favourite_recipes"
         android:name="com.example.przepisy.ui.home.FavouriteRecipesFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_favourite_recipes" />
+        tools:layout="@layout/fragment_favourite_recipes" >
+        <action
+            android:id="@+id/action_details"
+            app:destination="@id/recipe_details" />
+    </fragment>
 
     <fragment
         android:id="@+id/fridge"
@@ -74,6 +91,12 @@
         <action
             android:id="@+id/action_details6"
             app:destination="@id/random_recipe" />
+        <action
+            android:id="@+id/action_details8"
+            app:destination="@id/navigation_home2" />
+        <action
+            android:id="@+id/action_details"
+            app:destination="@id/recipe_details" />
 </fragment>
 
 
@@ -81,11 +104,41 @@
         android:id="@+id/ingredient_recipe"
         android:name="com.example.przepisy.ui.home.IngredientRecipeFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_ingredient_recipe" />
+        tools:layout="@layout/fragment_ingredient_recipe">
+    <action
+        android:id="@+id/action_details9"
+        app:destination="@id/fridge" />
+        <action
+            android:id="@+id/action_details"
+            app:destination="@id/recipe_details" />
+    </fragment>
 
     <fragment
         android:id="@+id/random_recipe"
         android:name="com.example.przepisy.ui.home.RandomRecipeFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_random_recipe" />
+        tools:layout="@layout/fragment_random_recipe">
+    <action
+        android:id="@+id/action_details7"
+        app:destination="@id/fridge" />
+        <action
+            android:id="@+id/action_details"
+            app:destination="@id/recipe_details" />
+        <action
+            android:id="@+id/action_details10"
+            app:destination="@id/navigation_home2" />
+    </fragment>
+
+        <fragment
+            android:id="@+id/user_recipe"
+            android:name="com.example.przepisy.ui.home.UserRecipesFragment"
+            android:label="@string/title_notifications"
+            tools:layout="@layout/fragment_user_recipes">
+            <action
+                android:id="@+id/action_details"
+                app:destination="@id/recipe_details" />
+        </fragment>
+
+
+
 </navigation>

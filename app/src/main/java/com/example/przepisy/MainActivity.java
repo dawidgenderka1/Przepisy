@@ -15,6 +15,7 @@ import com.example.przepisy.databinding.FragmentHome2Binding;
 import com.example.przepisy.databinding.FragmentHomeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -57,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
             binding.navView.getMenu().clear();
             binding.navView.inflateMenu(R.menu.bottom_nav_menu);
             Log.d("Niezalogowany", "Niezalogowany!!");
+        }
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
         }
 
 
@@ -119,9 +125,7 @@ public class MainActivity extends AppCompatActivity {
         if (intent != null) {
             String title = intent.getStringExtra("title");
             recipeid = intent.getIntExtra("recipeid", -1);
-            Log.d("Zalogowany", String.valueOf(recipeid));
-            Log.d("Zalogowany", String.valueOf(recipeid));
-            Log.d("Zalogowany", String.valueOf(recipeid));
+
             String description = intent.getStringExtra("description");
             int cookingTime = intent.getIntExtra("cookingTime", -1);
             String cuisineType = intent.getStringExtra("cuisineType");

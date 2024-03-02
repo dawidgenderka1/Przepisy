@@ -103,6 +103,18 @@ public class SessionManager {
         return ingredientIds == null ? new ArrayList<>() : ingredientIds;
     }
 
+    public void clearIngredientIds() {
+        // Utwórz pustą listę
+        List<Integer> emptyList = new ArrayList<>();
+        Gson gson = new Gson();
+        // Konwertuj pustą listę do formatu JSON
+        String json = gson.toJson(emptyList);
+        // Zapisz pusty JSON jako nową wartość dla INGREDIENT_IDS
+        editor.putString(INGREDIENT_IDS, json);
+        editor.apply();
+    }
+
+
     public void removeIngredientId(Integer ingredientId) {
         // Pobierz aktualną listę identyfikatorów
         List<Integer> ingredientIds = getIngredientIds();
@@ -143,6 +155,17 @@ public class SessionManager {
             // Zapisz zmodyfikowaną listę z powrotem
             setFridgeIngredientIds(ingredientIds);
         }
+    }
+
+    public void clearFridgeIngredientIds() {
+        // Utwórz pustą listę
+        List<Integer> emptyList = new ArrayList<>();
+        Gson gson = new Gson();
+        // Konwertuj pustą listę do formatu JSON
+        String json = gson.toJson(emptyList);
+        // Zapisz pusty JSON jako nową wartość dla INGREDIENT_IDS
+        editor.putString(FRIDGE_INGREDIENT_IDS, json);
+        editor.apply();
     }
 
     public void addFridgeIngredientId(Integer ingredientId) {

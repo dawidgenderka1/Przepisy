@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.example.przepisy.R;
 import com.example.przepisy.Recipe;
 import com.example.przepisy.RecipesAdapter;
 import com.example.przepisy.SessionManager;
+import com.example.przepisy.SpacesItemDecoration;
 import com.example.przepisy.api.ApiClient;
 import com.example.przepisy.api.UserApiService;
 import com.example.przepisy.databinding.FragmentDashboardBinding;
@@ -78,6 +80,8 @@ public class FavouriteRecipesFragment extends Fragment {
 
         binding.recipesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recipesRecyclerView.setAdapter(adapter);
+        int spaceInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+        binding.recipesRecyclerView.addItemDecoration(new SpacesItemDecoration(spaceInPixels));
 
 
 

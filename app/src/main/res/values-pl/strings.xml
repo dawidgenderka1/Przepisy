@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Przepisy</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">Panel użytkownika</string>
+    <string name="title_dashboard">Przepisy</string>
+    <string name="title_notifications">Ustawienia</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -10,12 +10,54 @@
     <string name="description_hint">Opis</string>
     <string name="cooking_time_hint">Czas przygotowania</string>
     <string name="instructions_hint">Instrukcje</string>
-    <string name="confirm">Zatwierdź</string>
-    <string name="return0">Powrót</string>
 
-    <string name="remove">Usuń</string>
+
+    <string name="remove">X</string>
     <string name="quantity">Ilość</string>
     <string name="add_ingredient">Dodaj</string>
+
+
+    <string name="listOfRecipes">Lista przepisów</string>
+    <string name="CreateRecipe">Stwórz przepis</string>
+    <string name="title">Tytuł</string>
+    <string name="titleEdit">Wpisz tytuł przepisu</string>
+    <string name="description">Opis</string>
+    <string name="descriptionEdit">Wpisz opis przepisu</string>
+    <string name="cookingTime">Czas przygotowania</string>
+    <string name="cookingTimeEdit">Wpisz czas przygotowania przepisu</string>
+    <string name="instruction">Instrukcja</string>
+    <string name="instructionEdit">Wpisz instrukcje przepisu</string>
+    <string name="addIngredient">Dodaj składnik</string>
+    <string name="confirm">Zatwierdź</string>
+    <string name="return0">Powrót</string>
+    <string name="fridge">Lodówka</string>
+    <string name="displayRecipes">Wyświetl przepisy</string>
+    <string name="drawRecipe">Wylosuj przepis</string>
+    <string name="logIn">Zaloguj się</string>
+    <string name="username">Nazwa użytkownika</string>
+    <string name="usernameEdit">Wpisz nazwę użytkownika</string>
+    <string name="password">Password</string>
+    <string name="passwordEdit">Wpisz hasło</string>
+    <string name="email">E-mail</string>
+    <string name="emailEdit">Wpisz e-mail</string>
+    <string name="password2">Potwierdź hasło</string>
+    <string name="password2Edit">Wpisz hasło jeszcze raz</string>
+    <string name="register">Zarejestruj się</string>
+    <string name="login2">Wróć do logowania</string>
+    <string name="userPanel">Panel użytkownika</string>
+    <string name="shoppingList">Lista zakupów</string>
+    <string name="favouriteRecipes">Ulubione przepisy</string>
+    <string name="yourRecipes">Twoje przepisy</string>
+    <string name="logout">Wyloguj</string>
+    <string name="settings">Ustawienia</string>
+    <string name="language">Język</string>
+    <string name="theme">Motyw</string>
+    <string name="ingredients">Składniki</string>
+    <string name="note">Notatka</string>
+    <string name="noteEdit">Wpisz swoją notatkę</string>
+    <string name="newComment">Nowy komentarz</string>
+    <string name="commentEdit">Wpisz swój komentarz</string>
+    <string name="ingredientName">Nazwa składniku</string>
 
     <string-array name="cuisine_types">
         <item>Włoska</item>
