@@ -3,7 +3,6 @@ package com.example.przepisy;
 public class FindRecipeIdResponse {
     private int RecipeID;
 
-    // Konstruktor, getter i setter
     public FindRecipeIdResponse(int recipeID) {
         RecipeID = recipeID;
     }

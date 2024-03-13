@@ -14,7 +14,6 @@ public class DatabaseHelper {
     public static Connection getConnection() {
         Connection con = null;
         try {
-            // Zaktualizowane do nowej nazwy klasy sterownika JDBC
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException | SQLException e) {
@@ -33,28 +32,8 @@ public class DatabaseHelper {
             pst.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            // Możesz chcieć tutaj dodać bardziej zaawansowaną obsługę błędów
         }
     }
 
-    /*public static boolean loginUser(String username, String password) {
-        boolean loginSuccess = false;
-        String query = "SELECT * FROM Users WHERE Username = ? AND Password = ?";
-        try (Connection con = getConnection();
-             PreparedStatement pst = con.prepareStatement(query)) {
-            pst.setString(1, username);
-            pst.setString(2, password);
-
-            try (ResultSet rs = pst.executeQuery()) {
-                // Jeśli ResultSet nie jest pusty, użytkownik istnieje, więc logowanie jest udane
-                loginSuccess = rs.next();
-            } catch (SQLException e) {
-                System.out.println("Błąd podczas wykonania zapytania: " + e.getMessage());
-            }
-        } catch (SQLException e) {
-            System.out.println("Błąd podczas nawiązywania połączenia: " + e.getMessage());
-        }
-        return loginSuccess;
-    }*/
 
 }

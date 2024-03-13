@@ -2,34 +2,28 @@ package com.example.przepisy;
 
 import android.content.Context;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.przepisy.api.ApiClient;
-import com.example.przepisy.api.IngredientNameResponse;
 import com.example.przepisy.api.UserApiService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class IngredientsAdapter3 extends RecyclerView.Adapter<IngredientsAdapter3.ViewHolder> {
-    private List<String> ingredientsList; // Lista na potrzeby przycisku usuwania
+    private List<String> ingredientsList;
     private Context context;
 
     public IngredientsAdapter3(List<String> ingredientsList, Context context) {
@@ -47,23 +41,17 @@ public class IngredientsAdapter3 extends RecyclerView.Adapter<IngredientsAdapter
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         loadIngredients(holder.ingredientNameSpinner);
-
-        // Usuń wszelkie istniejące listenery, aby uniknąć powtórzenia działań
         holder.removeIngredientButton.setOnClickListener(null);
 
-        // Ustaw widoczność przycisku "Usuń" dla wszystkich elementów jako GONE
         holder.removeIngredientButton.setVisibility(View.GONE);
 
-        // Dodaj przycisk "Usuń" tylko dla ostatniego elementu na liście
         if (position == getItemCount() - 1) {
             holder.removeIngredientButton.setVisibility(View.VISIBLE);
             holder.removeIngredientButton.setOnClickListener(v -> {
-                // Usuwanie składnika po kliknięciu przycisku
                 ingredientsList.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, ingredientsList.size());
 
-                // Dodatkowo usuń ID składnika z SessionManager
 
             });
         }

@@ -36,7 +36,7 @@
     <string name="logIn">Zaloguj się</string>
     <string name="username">Nazwa użytkownika</string>
     <string name="usernameEdit">Wpisz nazwę użytkownika</string>
-    <string name="password">Password</string>
+    <string name="password">Hasło</string>
     <string name="passwordEdit">Wpisz hasło</string>
     <string name="email">E-mail</string>
     <string name="emailEdit">Wpisz e-mail</string>
@@ -76,5 +76,14 @@
             <item>4</item>
             <item>5</item>
         </string-array>
+
+    <string-array name="language_options">
+        <item>Język polski</item>
+        <item>Język angielski</item>
+    </string-array>
+    <string-array name="theme_options">
+        <item>Motyw jasny</item>
+        <item>Motyw ciemny</item>
+    </string-array>
 
 </resources>

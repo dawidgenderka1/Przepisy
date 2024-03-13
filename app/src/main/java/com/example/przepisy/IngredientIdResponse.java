@@ -1,7 +1,6 @@
 package com.example.przepisy;
 
 public class IngredientIdResponse {
-    //@SerializedName("IngredientID")
     private int IngredientID;
 
     public int getIngredientID() {

@@ -11,6 +11,5 @@ public class Rating {
         this.Stars = Stars;
     }
 
-    // Konstruktor, gettery i settery
 }
 

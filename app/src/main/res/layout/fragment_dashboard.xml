@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/test1"
+    android:background="?attr/backgroundColor"
 
     tools:context=".ui.dashboard.DashboardFragment">
 
@@ -107,6 +107,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/comment_background"
                     android:hint="@string/titleEdit"
+                    android:maxLength="24"
                     app:layout_constraintTop_toBottomOf="@+id/titleTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -163,6 +164,8 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/comment_background"
                     android:hint="@string/cookingTimeEdit"
+                    android:inputType="number"
+                    android:maxLength="3"
                     app:layout_constraintTop_toBottomOf="@+id/cookingTimeTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

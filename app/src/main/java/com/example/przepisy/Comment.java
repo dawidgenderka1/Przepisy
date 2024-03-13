@@ -6,9 +6,8 @@ public class Comment {
 
     private String Username;
     private String CommentText;
-    private String CommentDate; // Format daty jako String, można dostosować typ zależnie od potrzeb
+    private String CommentDate;
 
-    // Konstruktor
     public Comment(int recipeID, String commentText, String commentDate, String Username) {
         this.RecipeID = recipeID;
         this.CommentText = commentText;
@@ -16,7 +15,6 @@ public class Comment {
         this.Username = Username;
     }
 
-    // Gettery i settery
     public int getRecipeID() {
         return RecipeID;
     }
@@ -48,6 +46,4 @@ public class Comment {
     public void setCommentDate(String commentDate) {
         CommentDate = commentDate;
     }
-
-    // Można dodać dodatkowe metody/formatowanie daty itp. w zależności od potrzeb
 }

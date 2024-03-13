@@ -7,13 +7,10 @@ public class Hash {
 
     public static String hashPassword(String password) {
         try {
-            // Utwórz instancję MessageDigest dla SHA-256
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-            // Przekształć hasło na bajty, zaktualizuj digest
             byte[] encodedhash = digest.digest(password.getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
-            // Konwersja bajtów na postać heksadecymalną
             StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
             for (int i = 0; i < encodedhash.length; i++) {
                 String hex = Integer.toHexString(0xff & encodedhash[i]);

@@ -5,14 +5,12 @@ public class RecipeIngredientRequest {
     private String IngredientName;
     private String Quantity;
 
-    // Konstruktor
     public RecipeIngredientRequest(int RecipeID, String IngredientName, String Quantity) {
         this.RecipeID = RecipeID;
         this.IngredientName = IngredientName;
         this.Quantity = Quantity;
     }
 
-    // Gettery i settery
     public int getRecipeID() {
         return RecipeID;
     }

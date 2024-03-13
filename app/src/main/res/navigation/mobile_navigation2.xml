@@ -45,6 +45,9 @@
         <action
             android:id="@+id/action_details"
             app:destination="@id/recipe_details" />
+        <action
+            android:id="@+id/action_details2"
+            app:destination="@id/navigation_notifications2" />
     </fragment>
 
     <fragment

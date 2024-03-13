@@ -5,7 +5,6 @@ public class Ingredient {
     private String Quantity;
     private String Name;
 
-    // Gettery i settery
 
     public Ingredient(int IngredientID, String Quantity, String Name) {
         this.IngredientID = IngredientID;

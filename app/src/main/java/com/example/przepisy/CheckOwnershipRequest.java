@@ -9,7 +9,6 @@ public class CheckOwnershipRequest {
         this.RecipeID = RecipeID;
     }
 
-    // Gettery i settery
     public String getUsername() {
         return Username;
     }

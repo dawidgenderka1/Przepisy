@@ -1,7 +1,6 @@
 package com.example.przepisy;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,10 +65,9 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
                     navController.navigate(R.id.action_details, bundle);
                 }catch(Exception e) {
 
-                    //Przełącz fragment
                     ((FragmentActivity)view.getContext()).getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, recipeDetailFragment)
-                            .addToBackStack(null) // Aby umożliwić powrót do poprzedniego fragmentu
+                            .addToBackStack(null)
                            .commit();
                 }
             }

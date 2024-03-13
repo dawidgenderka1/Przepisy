@@ -9,7 +9,7 @@ public class Recipe implements Parcelable {
     private int RecipeID;
 
     private int UserID;
-    private String Username; // Nowe pole
+    private String Username;
 
     private String Title;
 
@@ -55,7 +55,6 @@ public class Recipe implements Parcelable {
         this.Instrukcja = Instrukcja;
     }
 
-    // Gettery
     public String getTitle() {
         return Title;
     }
@@ -95,7 +94,7 @@ public class Recipe implements Parcelable {
         LiczbaOcen = in.readInt();
         SredniaOcena = in.readDouble();
         Instrukcja = in.readString();
-        Username = in.readString(); // Przykład odczytu dodatkowego pola
+        Username = in.readString();
     }
 
     @Override
@@ -110,7 +109,7 @@ public class Recipe implements Parcelable {
         dest.writeInt(LiczbaOcen);
         dest.writeDouble(SredniaOcena);
         dest.writeString(Instrukcja);
-        dest.writeString(Username); // Przykład zapisu dodatkowego pola
+        dest.writeString(Username);
     }
 
     @Override

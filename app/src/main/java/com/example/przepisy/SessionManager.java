@@ -19,20 +19,18 @@ public class SessionManager {
     private static final String IS_LOGGED_IN = "isLoggedIn";
     private static final String USERNAME = "username";
     private static final String USER_ID = "userId";
-    private static final String LANGUAGE = "language"; // Dodane
-    private static final String THEME = "theme"; // Dodane
+    private static final String LANGUAGE = "language";
+    private static final String THEME = "theme";
     private static final String INGREDIENT_IDS = "ingredientIds";
     private static final String FRIDGE_INGREDIENT_IDS = "fridgeIds";
 
 
 
-    // Prywatny konstruktor, aby zapobiec tworzeniu instancji z zewnątrz
     private SessionManager(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         editor = prefs.edit();
     }
 
-    // Metoda statyczna do uzyskania instancji
     public static synchronized SessionManager getInstance(Context context) {
         if (instance == null) {
             instance = new SessionManager(context);
@@ -64,7 +62,7 @@ public class SessionManager {
     }
 
     public int getUserId() {
-        return prefs.getInt(USER_ID, -1); // Użyj wartości domyślnej, która wskazuje na brak userId
+        return prefs.getInt(USER_ID, -1);
     }
 
     // Dodane metody dla języka
@@ -74,7 +72,7 @@ public class SessionManager {
     }
 
     public String getLanguage() {
-        return prefs.getString(LANGUAGE, "Język polski"); // Domyślnie "Język polski"
+        return prefs.getString(LANGUAGE, "Język polski");
     }
 
     // Dodane metody dla motywu
@@ -84,7 +82,7 @@ public class SessionManager {
     }
 
     public String getTheme() {
-        return prefs.getString(THEME, "Motyw jasny"); // Domyślnie "Motyw jasny"
+        return prefs.getString(THEME, "Motyw jasny");
     }
 
     public void setIngredientIds(List<Integer> ingredientIds) {
@@ -94,7 +92,6 @@ public class SessionManager {
         editor.apply();
     }
 
-    // Dodaj metodę do odczytywania listy identyfikatorów składników
     public List<Integer> getIngredientIds() {
         Gson gson = new Gson();
         String json = prefs.getString(INGREDIENT_IDS, null);
@@ -104,26 +101,20 @@ public class SessionManager {
     }
 
     public void clearIngredientIds() {
-        // Utwórz pustą listę
         List<Integer> emptyList = new ArrayList<>();
         Gson gson = new Gson();
-        // Konwertuj pustą listę do formatu JSON
         String json = gson.toJson(emptyList);
-        // Zapisz pusty JSON jako nową wartość dla INGREDIENT_IDS
         editor.putString(INGREDIENT_IDS, json);
         editor.apply();
     }
 
 
     public void removeIngredientId(Integer ingredientId) {
-        // Pobierz aktualną listę identyfikatorów
         List<Integer> ingredientIds = getIngredientIds();
 
-        // Usuń określony identyfikator, jeśli istnieje
         if (ingredientIds.contains(ingredientId)) {
             ingredientIds.remove(ingredientId);
 
-            // Zapisz zmodyfikowaną listę z powrotem
             setIngredientIds(ingredientIds);
         }
     }
@@ -135,7 +126,6 @@ public class SessionManager {
         editor.apply();
     }
 
-    // Dodaj metodę do odczytywania listy identyfikatorów składników
     public List<Integer> getFridgeIngredientIds() {
         Gson gson = new Gson();
         String json = prefs.getString(FRIDGE_INGREDIENT_IDS, null);
@@ -145,43 +135,33 @@ public class SessionManager {
     }
 
     public void removeFridgeIngredientId(Integer ingredientId) {
-        // Pobierz aktualną listę identyfikatorów
         List<Integer> ingredientIds = getFridgeIngredientIds();
 
-        // Usuń określony identyfikator, jeśli istnieje
         if (ingredientIds.contains(ingredientId)) {
             ingredientIds.remove(ingredientId);
 
-            // Zapisz zmodyfikowaną listę z powrotem
             setFridgeIngredientIds(ingredientIds);
         }
     }
 
     public void clearFridgeIngredientIds() {
-        // Utwórz pustą listę
         List<Integer> emptyList = new ArrayList<>();
         Gson gson = new Gson();
-        // Konwertuj pustą listę do formatu JSON
         String json = gson.toJson(emptyList);
-        // Zapisz pusty JSON jako nową wartość dla INGREDIENT_IDS
         editor.putString(FRIDGE_INGREDIENT_IDS, json);
         editor.apply();
     }
 
     public void addFridgeIngredientId(Integer ingredientId) {
-        // Pobierz aktualną listę identyfikatorów
         List<Integer> ingredientIds = getFridgeIngredientIds();
 
-        // Dodaj nowy identyfikator do listy, jeśli jeszcze nie istnieje
         if (!ingredientIds.contains(ingredientId)) {
             ingredientIds.add(ingredientId);
 
-            // Zapisz zmodyfikowaną listę z powrotem
             setFridgeIngredientIds(ingredientIds);
         }
     }
 
 
 
-    // Możesz dodać więcej metod do zarządzania sesją użytkownika
 }

@@ -1,6 +1,6 @@
 package com.example.przepisy.ui.notifications;
 
-import android.content.Intent;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -11,15 +11,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.przepisy.MainActivity;
 import com.example.przepisy.R;
 import com.example.przepisy.SessionManager;
 import com.example.przepisy.databinding.FragmentNotificationsBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Locale;
 
@@ -27,16 +32,19 @@ public class NotificationsFragment2 extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private int y = 0;
+    private int x = 0;
+    private String savedLanguage;
+    private String savedTheme;
+    private View root;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        NotificationsViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
+        NotificationsViewModel notificationsViewModel = new ViewModelProvider(this).get(NotificationsViewModel.class);
 
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        root = binding.getRoot();
 
-        // Ustawienie spinnerów
+
         setupLanguageSpinner();
         setupThemeSpinner();
 
@@ -50,8 +58,12 @@ public class NotificationsFragment2 extends Fragment {
         adapterLanguage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLanguage.setAdapter(adapterLanguage);
 
-        String savedLanguage = SessionManager.getInstance(getContext()).getLanguage();
+        savedLanguage = SessionManager.getInstance(getContext()).getLanguage();
         if (!savedLanguage.isEmpty()) {
+            if(savedLanguage.equals("Język angielski"))
+            {
+                savedLanguage = "English";
+            }
             int spinnerPosition = adapterLanguage.getPosition(savedLanguage);
             spinnerLanguage.setSelection(spinnerPosition);
         }
@@ -60,19 +72,45 @@ public class NotificationsFragment2 extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selectedLanguage = parentView.getItemAtPosition(position).toString();
-                SessionManager.getInstance(getContext()).setLanguage(selectedLanguage);
-                String languageCode = mapLanguageToCode(selectedLanguage);
-                Locale locale = new Locale(languageCode);
                 y=y+1;
-                if(y == 2)
+                if(selectedLanguage.equals("Polish") || selectedLanguage.equals("Język polski"))
                 {
-                    updateLocale(locale);
+                    String selectedLanguage2 = "Język polski";
+                    SessionManager.getInstance(getContext()).setLanguage(selectedLanguage2);
+                    String languageCode = mapLanguageToCode(selectedLanguage2);
+                    Locale locale = new Locale(languageCode);
+                    if(y > 1)
+                    {
+                        updateLocale(locale);
+                        if (refreshListener != null) {
+                            refreshListener.refreshBottomNav();
+                        }
+                        NavController navController = Navigation.findNavController(root);
+                        navController.navigate(R.id.action_details2);
+                    }
                 }
+                if(selectedLanguage.equals("English") || selectedLanguage.equals("Język angielski"))
+                {
+                    String selectedLanguage2 = "Język angielski";
+                    SessionManager.getInstance(getContext()).setLanguage(selectedLanguage2);
+                    String languageCode = mapLanguageToCode(selectedLanguage2);
+                    Locale locale = new Locale(languageCode);
+                    if(y > 1)
+                    {
+                        updateLocale(locale);
+                        if (refreshListener != null) {
+                            refreshListener.refreshBottomNav();
+                        }
+                        NavController navController = Navigation.findNavController(root);
+                        navController.navigate(R.id.action_details2);
+                    }
+                }
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // Kod do wykonania, gdy nic nie jest wybrane
+
             }
         });
     }
@@ -84,8 +122,21 @@ public class NotificationsFragment2 extends Fragment {
         adapterTheme.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTheme.setAdapter(adapterTheme);
 
-        String savedTheme = SessionManager.getInstance(getContext()).getTheme();
+        savedTheme = SessionManager.getInstance(getContext()).getTheme();
+        savedLanguage = SessionManager.getInstance(getContext()).getLanguage();
+
         if (!savedTheme.isEmpty()) {
+            if(savedLanguage.equals("Język angielski"))
+            {
+                if(savedTheme.equals("Motyw ciemny"))
+                {
+                    savedTheme = "Night";
+                }
+                if(savedTheme.equals("Motyw jasny"))
+                {
+                    savedTheme = "Day";
+                }
+            }
             int spinnerPosition = adapterTheme.getPosition(savedTheme);
             spinnerTheme.setSelection(spinnerPosition);
         }
@@ -94,14 +145,29 @@ public class NotificationsFragment2 extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selectedTheme = parentView.getItemAtPosition(position).toString();
-                SessionManager.getInstance(getContext()).setTheme(selectedTheme);
-                // Tutaj można dodać logikę zmiany motywu w aplikacji
+                x=x+1;
+                if(selectedTheme.equals("Day") || selectedTheme.equals("Motyw jasny"))
+                {
+                    String selectedTheme2 = "Motyw jasny";
+                    SessionManager.getInstance(getContext()).setTheme(selectedTheme2);
+                    if(x > 1) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+                if(selectedTheme.equals("Night") || selectedTheme.equals("Motyw ciemny"))
+                {
+                    String selectedTheme2 = "Motyw ciemny";
+                    SessionManager.getInstance(getContext()).setTheme(selectedTheme2);
+                    if(x > 1) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }
+                }
 
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // Kod do wykonania, gdy nic nie jest wybrane
+
             }
         });
     }
@@ -120,10 +186,29 @@ public class NotificationsFragment2 extends Fragment {
     private String mapLanguageToCode(String languageName) {
         switch (languageName) {
             case "Język polski":
-                return "pl"; // Kod języka dla polskiego
-            // Angielski zostanie pominięty, aby korzystać z domyślnych zasobów z folderu `values`
+                return "pl";
+            case "Polish":
+                return "pl";
             default:
-                return ""; // Nie ustawiamy języka, korzystamy z domyślnych zasobów
+                return "";
+        }
+    }
+
+    public interface BottomNavRefreshListener {
+        void refreshBottomNav();
+    }
+
+    private BottomNavRefreshListener refreshListener;
+
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof BottomNavRefreshListener) {
+            refreshListener = (BottomNavRefreshListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement BottomNavRefreshListener");
         }
     }
 

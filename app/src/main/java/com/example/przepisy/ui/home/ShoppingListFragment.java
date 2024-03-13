@@ -14,18 +14,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.przepisy.Ingredient;
 import com.example.przepisy.IngredientsAdapter2;
 import com.example.przepisy.R;
 import com.example.przepisy.SessionManager;
 import com.example.przepisy.SpacesItemDecoration;
 import com.example.przepisy.api.ApiClient;
-import com.example.przepisy.api.IngredientNameResponse;
+import com.example.przepisy.IngredientNameResponse;
 import com.example.przepisy.api.UserApiService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,7 +37,6 @@ public class ShoppingListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_shopping_list, container, false);
         ImageView boughtButton = view.findViewById(R.id.boughtButton);
         ingredientsShoppingListRecyclerView = view.findViewById(R.id.ingredientsShoppingListRecyclerView);
@@ -47,7 +44,6 @@ public class ShoppingListFragment extends Fragment {
         int spaceInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
         ingredientsShoppingListRecyclerView.addItemDecoration(new SpacesItemDecoration(spaceInPixels));
 
-        // Inicjalizacja adaptera z pustą listą
         ingredientsAdapter = new IngredientsAdapter2(ingredientsList);
         ingredientsShoppingListRecyclerView.setAdapter(ingredientsAdapter);
 
@@ -55,14 +51,12 @@ public class ShoppingListFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                // Usuń ID składnika z SessionManager
                 Log.d("TAG", "Przycisk kliknięty");
 
                 SessionManager.getInstance(getContext()).clearIngredientIds();
 
                 ingredientsList.clear();
 
-                // Powiadom adapter o zmianie danych
                 ingredientsAdapter.notifyDataSetChanged();
             }
         });
@@ -78,7 +72,6 @@ public class ShoppingListFragment extends Fragment {
             @Override
             public void onResponse(Call<IngredientNameResponse> call, Response<IngredientNameResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Dodaj składnik do listy i odśwież adapter
                     ingredientsList.add(response.body());
                     ingredientsAdapter.notifyItemInserted(ingredientsList.size() - 1);
                 } else {

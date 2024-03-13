@@ -1,7 +1,6 @@
 package com.example.przepisy.api;
 
 import com.example.przepisy.CheckFavouriteResponse;
-import com.example.przepisy.CheckOwnershipRequest;
 import com.example.przepisy.CheckOwnershipResponse;
 import com.example.przepisy.Comment;
 import com.example.przepisy.FavouriteToggleRequest;
@@ -9,6 +8,7 @@ import com.example.przepisy.FindRecipeIdRequest;
 import com.example.przepisy.FindRecipeIdResponse;
 import com.example.przepisy.Ingredient;
 import com.example.przepisy.IngredientIdResponse;
+import com.example.przepisy.IngredientNameResponse;
 import com.example.przepisy.Note;
 import com.example.przepisy.NoteResponse;
 import com.example.przepisy.Rating;
@@ -23,7 +23,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -102,28 +101,6 @@ public interface UserApiService {
 
     @GET("/getRecipesUserCanCook")
     Call<List<Recipe>> getRecipesUserCanCook(@Query("ingredientNames") String ingredientNames, @Query("lang") String language);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

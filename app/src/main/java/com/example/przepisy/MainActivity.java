@@ -13,10 +13,13 @@ import android.widget.Toast;
 import com.example.przepisy.api.ApiClient;
 import com.example.przepisy.databinding.FragmentHome2Binding;
 import com.example.przepisy.databinding.FragmentHomeBinding;
+import com.example.przepisy.ui.notifications.NotificationsFragment;
+import com.example.przepisy.ui.notifications.NotificationsFragment2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -27,13 +30,14 @@ import com.example.przepisy.databinding.ActivityMainBinding;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NotificationsFragment.BottomNavRefreshListener, NotificationsFragment2.BottomNavRefreshListener {
 
     private ActivityMainBinding binding;
     private SessionManager sessionManager;
     int recipeid=-1;
     NavHostFragment navHostFragment;
     NavController navController;
+    private BottomNavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,16 @@ public class MainActivity extends AppCompatActivity {
 
         sessionManager = SessionManager.getInstance(getApplicationContext());
         //sessionManager.setLogin(false);
+        String theme = sessionManager.getTheme();
+        if (theme.equals("Motyw jasny")) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+        if (theme.equals("Motyw ciemny")) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+        String languageCode = mapLanguageToCode(sessionManager.getLanguage());
+        Locale locale = new Locale(languageCode);
+        updateLocale(locale);
 
         navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         navController = navHostFragment.getNavController();
@@ -68,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        BottomNavigationView navView = binding.navView;
+        navView = binding.navView;
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -97,17 +111,28 @@ public class MainActivity extends AppCompatActivity {
                 navController.navigate(R.id.navigation_notifications);
                 return true;
             }
-            // Dodaj tutaj obsługę dla pozostałych elementów, jeśli są
 
-            return false; // Domyślne zachowanie dla nierozpoznanych elementów
+            return false;
         });
 
-        String languageCode = mapLanguageToCode(sessionManager.getLanguage());
-        Locale locale = new Locale(languageCode);
-        updateLocale(locale);
+
 
         handleIntent(getIntent());
+
+
     }
+
+
+    public void refreshBottomNav() {
+        navView.getMenu().clear();
+        navView.inflateMenu(R.menu.bottom_nav_menu);
+
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                navController.getGraph()).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
+    }
+
 
     public void reloadActivity() {
         Intent intent = getIntent();
@@ -130,12 +155,8 @@ public class MainActivity extends AppCompatActivity {
             int cookingTime = intent.getIntExtra("cookingTime", -1);
             String cuisineType = intent.getStringExtra("cuisineType");
             String instruction = intent.getStringExtra("instruction");
-            // Możesz pobrać więcej danych, jeśli są potrzebne
 
             if (recipeid != -1) {
-                // Logika do otwarcia fragmentu ze szczegółami przepisu
-                // Możesz użyć NavController do nawigacji
-                //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main); // Upewnij się, że używasz właściwego ID dla NavHostFragment
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
                 bundle.putInt("recipeid", recipeid);
@@ -143,8 +164,8 @@ public class MainActivity extends AppCompatActivity {
                 bundle.putInt("cookingTime", cookingTime);
                 bundle.putString("cuisineType", cuisineType);
                 bundle.putString("instruction", instruction);
-                // Dodaj inne dane do bundle, jeśli są potrzebne
-                navController.navigate(R.id.action_details, bundle); // Zakładając, że masz odpowiednią akcję w grafie nawigacji
+
+                navController.navigate(R.id.action_details, bundle);
             }
         }
     }
@@ -163,10 +184,9 @@ public class MainActivity extends AppCompatActivity {
     private String mapLanguageToCode(String languageName) {
         switch (languageName) {
             case "Język polski":
-                return "pl"; // Kod języka dla polskiego
-            // Angielski zostanie pominięty, aby korzystać z domyślnych zasobów z folderu `values`
+                return "pl";
             default:
-                return ""; // Nie ustawiamy języka, korzystamy z domyślnych zasobów
+                return "";
         }
     }
 

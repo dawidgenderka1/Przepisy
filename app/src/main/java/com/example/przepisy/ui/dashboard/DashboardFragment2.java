@@ -1,17 +1,12 @@
 package com.example.przepisy.ui.dashboard;
 
-import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,16 +29,12 @@ import com.example.przepisy.RecipesAdapter;
 import com.example.przepisy.SessionManager;
 import com.example.przepisy.SpacesItemDecoration;
 import com.example.przepisy.api.ApiClient;
-import com.example.przepisy.api.IngredientNameResponse;
+import com.example.przepisy.IngredientNameResponse;
 import com.example.przepisy.api.UserApiService;
-import com.example.przepisy.databinding.FragmentDashboard2Binding;
 import com.example.przepisy.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,7 +63,6 @@ public class DashboardFragment2 extends Fragment {
             @Override
             public void handleOnBackPressed() {
 
-                // Logika nawigacji, co robić po naciśnięciu przycisku cofnij
                 if(help==1)
                 {
                     binding.formCreateRecipe.setVisibility(View.GONE);
@@ -86,7 +76,6 @@ public class DashboardFragment2 extends Fragment {
             }
         };
 
-        // Rejestrujemy callback w Dispatcherze przycisku cofnij, który jest powiązany z cyklem życia widoku fragmentu
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
 
@@ -96,17 +85,14 @@ public class DashboardFragment2 extends Fragment {
 
 
 
-        // Inicjalizacja RecyclerView z pustym adapterem
         RecipesAdapter adapter = new RecipesAdapter(new ArrayList<>(), new RecipesAdapter.RecipeClickListener() {
             @Override
             public void onRecipeClick(Recipe recipe) {
-                // Tutaj możesz na przykład wyświetlić Toast z dodatkowymi informacjami
-                Log.d("55", "index=");
                 binding.fabAddRecipe.setVisibility(View.GONE);
             }
             @Override
             public void onHideRecyclerView() {
-                binding.recipesRecyclerView.setVisibility(View.GONE); // Ukrywa RecyclerView
+                binding.recipesRecyclerView.setVisibility(View.GONE);
             }
         });
 
@@ -116,7 +102,6 @@ public class DashboardFragment2 extends Fragment {
         binding.recipesRecyclerView.addItemDecoration(new SpacesItemDecoration(spaceInPixels));
 
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
-            // Użytkownik nie jest zalogowany, ukryj EditText i Button
             binding.fabAddRecipe.setVisibility(View.GONE);
         }
         else{
@@ -125,10 +110,9 @@ public class DashboardFragment2 extends Fragment {
 
 
 
-        loadRecipes(); // Asynchroniczne ładowanie danych
+        loadRecipes();
 
         binding.fabAddRecipe.setOnClickListener(view -> {
-            // Ukryj RecyclerView i pokaż formularz
             binding.recipesRecyclerView.setVisibility(View.GONE);
             binding.listOfRecipes.setVisibility(View.GONE);
             binding.fabAddRecipe.setVisibility(View.GONE);
@@ -138,7 +122,6 @@ public class DashboardFragment2 extends Fragment {
         });
 
         binding.buttonReturn.setOnClickListener(view -> {
-            // Ukryj formularz i pokaż RecyclerView
             binding.formCreateRecipe.setVisibility(View.GONE);
             binding.fabAddRecipe.setVisibility(View.VISIBLE);
             binding.listOfRecipes.setVisibility(View.VISIBLE);
@@ -167,21 +150,17 @@ public class DashboardFragment2 extends Fragment {
     }
 
     private void addIngredientView() {
-        // Stwórz nowy widok składnika z 'ingredient_item.xml'
         View ingredientView = LayoutInflater.from(getContext()).inflate(R.layout.ingredient_item, null, false);
         Spinner ingredientNameSpinner = ingredientView.findViewById(R.id.ingredientNameSpinner);
         ImageView deleteButton = ingredientView.findViewById(R.id.removeIngredientButton);
 
-        // Ustaw OnClickListener dla przycisku "Usuń"
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Usuń widok składnika z ingredientsContainer
                 binding.ingredientsContainer.removeView(ingredientView);
             }
         });
 
-        // Pobierz nazwy składników z bazy danych i dodaj je do Spinnera
         UserApiService apiService = ApiClient.getUserService();
 
         String currentLanguage = SessionManager.getInstance(getContext()).getLanguage();
@@ -208,12 +187,10 @@ public class DashboardFragment2 extends Fragment {
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        // Na przykład, dodaj margines dolny 8dp
         int marginInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
         layoutParams.setMargins(0, 0, 0, marginInPixels);
         ingredientView.setLayoutParams(layoutParams);
 
-        // Dodaj widok składnika do ingredientsContainer
         binding.ingredientsContainer.addView(ingredientView);
     }
 
@@ -225,12 +202,10 @@ public class DashboardFragment2 extends Fragment {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Aktualizacja danych w adapterze
                     RecipesAdapter adapter = (RecipesAdapter) binding.recipesRecyclerView.getAdapter();
                     if (adapter != null) {
                         adapter.updateData(response.body());
                     }
-                    Log.d("DashboardFragment", "Odebrane przepisy: " + response.body());
 
                 } else {
 
@@ -239,7 +214,6 @@ public class DashboardFragment2 extends Fragment {
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                // Obsłuż błąd połączenia lub inny błąd
             }
         });
     }
@@ -253,7 +227,7 @@ public class DashboardFragment2 extends Fragment {
         try {
             cookingTime = Integer.parseInt(binding.editTextCookingTime.getText().toString());
         } catch (NumberFormatException e) {
-            cookingTime = 0; // Domyślna wartość, jeśli pole jest puste lub nieprawidłowe
+            cookingTime = 0;
         }
         String cuisineType = binding.spinnerCuisineType.getSelectedItem().toString();
         String instructions = binding.editTextInstructions.getText().toString();
@@ -269,7 +243,6 @@ public class DashboardFragment2 extends Fragment {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Przepis dodany pomyślnie", Toast.LENGTH_SHORT).show();
-                    // Opcjonalnie: schowaj formularz i odśwież listę przepisów
                     findRecipeIdAndAddIngredients(username,title,description,cookingTime2,cuisineType,instructions);
                     binding.formCreateRecipe.setVisibility(View.GONE);
                     binding.recipesRecyclerView.setVisibility(View.VISIBLE);
@@ -286,8 +259,6 @@ public class DashboardFragment2 extends Fragment {
                 Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
             }
         });
-
-        //findRecipeIdAndAddIngredients(username,title,description);
     }
 
     private void findRecipeIdAndAddIngredients(String username, String title, String description, int cookingTime, String cuisineType, String instructions) {
@@ -298,8 +269,7 @@ public class DashboardFragment2 extends Fragment {
             @Override
             public void onResponse(Call<FindRecipeIdResponse> call, Response<FindRecipeIdResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    int recipeId = response.body().getRecipeID(); // Załóżmy, że getRecipeId() zwraca int
-                    // Teraz, gdy masz recipeId, możesz dodać składniki
+                    int recipeId = response.body().getRecipeID();
                     addRecipeIngredient(recipeId);
                     RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
                     bundle.putString("title", title);
@@ -332,7 +302,6 @@ public class DashboardFragment2 extends Fragment {
     private void addRecipeIngredient(int recipeId) {
         UserApiService apiService = ApiClient.getUserService();
 
-        // Tworzenie obiektu żądania
         for(int i = 0; i < binding.ingredientsContainer.getChildCount(); i++) {
             View ingredientView = binding.ingredientsContainer.getChildAt(i);
             Spinner ingredientNameSpinner = ingredientView.findViewById(R.id.ingredientNameSpinner);
@@ -352,9 +321,9 @@ public class DashboardFragment2 extends Fragment {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
-                        Log.d("AddRecipeIngredient", "Składnik dodany pomyślnie");
+
                     } else {
-                        Log.e("AddRecipeIngredient", "Błąd przy dodawaniu składnika");
+
                     }
                 }
 
@@ -370,7 +339,6 @@ public class DashboardFragment2 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Sprawdź, czy RecyclerView jest niewidoczny i jeśli tak, to go pokaż
         if (binding.recipesRecyclerView.getVisibility() == View.GONE) {
             binding.recipesRecyclerView.setVisibility(View.VISIBLE);
         }

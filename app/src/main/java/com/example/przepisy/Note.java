@@ -11,6 +11,5 @@ public class Note {
         this.NoteText = NoteText;
     }
 
-    // Konstruktory, gettery i settery
 }
 

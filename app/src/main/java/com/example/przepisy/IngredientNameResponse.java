@@ -1,4 +1,4 @@
-package com.example.przepisy.api;
+package com.example.przepisy;
 
 public class IngredientNameResponse {
 
@@ -7,7 +7,6 @@ public class IngredientNameResponse {
     private int IngredientID;
 
 
-    // Konstruktor, getter i setter
     public IngredientNameResponse(String Name, String Quantity) {
         this.Name = Name;
         this.Quantity = Quantity;

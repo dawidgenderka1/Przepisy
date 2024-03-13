@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Przepisy"
+        android:theme="@style/Theme_Przepisy"
 
         tools:targetApi="31">
         <activity

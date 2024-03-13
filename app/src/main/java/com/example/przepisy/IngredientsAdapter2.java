@@ -1,19 +1,14 @@
 package com.example.przepisy;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.przepisy.api.IngredientNameResponse;
 
 import java.util.List;
 
@@ -41,13 +36,10 @@ public class IngredientsAdapter2 extends RecyclerView.Adapter<IngredientsAdapter
         holder.removeIngredientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Pobierz ID składnika do usunięcia
-                Integer ingredientIdToRemove = ingredient.getIngredientID(); // Zakładając, że IngredientNameResponse posiada metodę getIngredientId()
+                Integer ingredientIdToRemove = ingredient.getIngredientID();
 
-                // Usuń ID składnika z SessionManager
                 SessionManager.getInstance(context).removeIngredientId(ingredientIdToRemove);
 
-                // Usuń składnik z listy wyświetlanych składników
                 ingredientsList.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, ingredientsList.size());
@@ -57,24 +49,17 @@ public class IngredientsAdapter2 extends RecyclerView.Adapter<IngredientsAdapter
         holder.boughtButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Pobierz aktualną listę ID składników z SessionManager
                 List<Integer> fridgeIngredientIds = SessionManager.getInstance(context).getFridgeIngredientIds();
 
-                // Pobierz ID składnika, który ma być dodany do lodówki
                 Integer ingredientIdToAdd = ingredient.getIngredientID();
 
-                // Sprawdź, czy składnik jest już w lodówce
                 if (!fridgeIngredientIds.contains(ingredientIdToAdd)) {
-                    // Jeśli nie, dodaj go do listy
                     fridgeIngredientIds.add(ingredientIdToAdd);
 
-                    // Zaktualizuj listę ID składników w lodówce w SessionManager
                     SessionManager.getInstance(context).setFridgeIngredientIds(fridgeIngredientIds);
 
-                    // Opcjonalnie, pokaż komunikat użytkownikowi
                     //Toast.makeText(context, "Składnik dodany do lodówki", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Opcjonalnie, pokaż komunikat, że składnik jest już w lodówce
                     //Toast.makeText(context, "Składnik jest już w lodówce", Toast.LENGTH_SHORT).show();
                 }
                 SessionManager.getInstance(context).removeIngredientId(ingredientIdToAdd);
@@ -109,8 +94,6 @@ public class IngredientsAdapter2 extends RecyclerView.Adapter<IngredientsAdapter
         }
     }
 
-
-    // Metoda do aktualizacji danych w adapterze
     public void updateData(List<IngredientNameResponse> newData) {
         ingredientsList.clear();
         ingredientsList.addAll(newData);

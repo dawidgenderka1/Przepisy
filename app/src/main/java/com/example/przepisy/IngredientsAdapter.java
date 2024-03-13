@@ -35,13 +35,10 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Ingredient ingredient = ingredientsList.get(position);
-        // Załóżmy, że mamy dostęp do ID składnika w obiekcie `recipe`
-        int ingredientId = ingredient.getIngredientID(); // Przykładowa metoda do pobrania ID składnika z obiektu przepisu
+        int ingredientId = ingredient.getIngredientID();
 
-        // Pobieranie zapisanych ID składników z SessionManager
         List<Integer> savedIngredientIds = SessionManager.getInstance(context).getFridgeIngredientIds();
 
-        // Sprawdzenie, czy aktualne ID składnika znajduje się w zapisanych ID
         if (savedIngredientIds.contains(ingredientId)) {
             holder.imageView.setImageResource(R.drawable.baseline_check_24);
         } else {
@@ -53,7 +50,6 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
 
 
-        // Dalsza część logiki ustawiająca inne elementy ViewHoldera
     }
 
 

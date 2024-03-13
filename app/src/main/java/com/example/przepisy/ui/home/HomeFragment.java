@@ -32,8 +32,7 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -42,7 +41,6 @@ public class HomeFragment extends Fragment {
 
 
 
-        // Ustawienie logiki przełączania formularzy
         setupFormSwitching();
         setupLoginAndRegisterActions();
 
@@ -55,21 +53,16 @@ public class HomeFragment extends Fragment {
 
 
     private void setupFormSwitching() {
-        // Przyciski
         Button buttonShowRegisterForm = binding.buttonShowRegisterForm;
         Button buttonShowLoginForm = binding.buttonShowLoginForm;
-
-        // Layouty formularzy
         LinearLayout loginForm = binding.loginForm;
         LinearLayout registerForm = binding.registerForm;
 
-        // Pokaż formularz rejestracji
         buttonShowRegisterForm.setOnClickListener(v -> {
             loginForm.setVisibility(View.GONE);
             registerForm.setVisibility(View.VISIBLE);
         });
 
-        // Powrót do formularza logowania
         buttonShowLoginForm.setOnClickListener(v -> {
             registerForm.setVisibility(View.GONE);
             loginForm.setVisibility(View.VISIBLE);
@@ -77,15 +70,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupLoginAndRegisterActions() {
-        // Przykład dodawania akcji do przycisku logowania
         binding.buttonLogin.setOnClickListener(v -> {
-            // Logika logowania
             loginUser();
         });
 
-        // Przykład dodawania akcji do przycisku rejestracji
         binding.buttonRegister.setOnClickListener(v -> {
-            // Logika rejestracji
             registerUser();
         });
     }
@@ -107,23 +96,19 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    // Tutaj obsłuż pomyślne logowanie
                     Toast.makeText(getContext(), "Logowanie udane", Toast.LENGTH_SHORT).show();
                     sessionManager.setLogin(true);
                     sessionManager.setUsername(username);
-                    // Przeładowanie aktywności lub przejście do innego fragmentu/aktywności
                     if (getActivity() instanceof MainActivity) {
                         ((MainActivity) getActivity()).reloadActivity();
                     }
                 } else {
-                    // Obsłuż błąd logowania (np. niepoprawne dane logowania)
                     Toast.makeText(getContext(), "Błąd logowania", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                // Obsłuż błąd połączenia z serwerem
                 Toast.makeText(getContext(), "Błąd połączenia: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -131,13 +116,16 @@ public class HomeFragment extends Fragment {
 
 
     private void registerUser() {
-        // Tutaj wprowadź logikę rejestracji
         String username = binding.registerUsername.getText().toString();
         String email = binding.registerEmail.getText().toString();
         String password = binding.registerPassword.getText().toString();
         String confirmPassword = binding.registerConfirmPassword.getText().toString();
 
-        // Sprawdź, czy hasła się zgadzają, i wykonaj rejestrację
+        if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
+            Toast.makeText(getContext(), "Nie wypełniono wszystkich danych", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!password.equals(confirmPassword)) {
             Toast.makeText(getContext(), "Hasła się nie zgadzają", Toast.LENGTH_SHORT).show();
             return;
@@ -152,7 +140,7 @@ public class HomeFragment extends Fragment {
 
         password = Hash.hashPassword(password);
 
-        User newUser = new User(username, email, password); // Upewnij się, że konstruktor klasy User pasuje do tego
+        User newUser = new User(username, email, password);
 
         UserApiService apiService = ApiClient.getUserService();
         apiService.addUser(newUser).enqueue(new Callback<Void>() {
@@ -165,7 +153,6 @@ public class HomeFragment extends Fragment {
                     if (getActivity() instanceof MainActivity) {
                         ((MainActivity) getActivity()).reloadActivity();
                     }
-                    // Opcjonalnie: Przełącz na widok logowania lub profil użytkownika
                 } else {
                     Toast.makeText(getContext(), "Błąd rejestracji", Toast.LENGTH_SHORT).show();
                 }
@@ -179,7 +166,6 @@ public class HomeFragment extends Fragment {
     }
 
     public static boolean isValidEmail(String email) {
-        // Proste wyrażenie regularne sprawdzające obecność znaku "@" oraz podstawową strukturę e-maila
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
         if (email == null) {

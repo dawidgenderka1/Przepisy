@@ -42,26 +42,18 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-
-        // Inicjalizacja RecyclerView z pustym adapterem
         RecipesAdapter adapter = new RecipesAdapter(new ArrayList<>(), new RecipesAdapter.RecipeClickListener() {
             @Override
             public void onRecipeClick(Recipe recipe) {
-                // Tutaj możesz na przykład wyświetlić Toast z dodatkowymi informacjami
-                Log.d("55", "index=");
                 binding.fabAddRecipe.setVisibility(View.GONE);
             }
 
 
             @Override
             public void onHideRecyclerView() {
-                binding.recipesRecyclerView.setVisibility(View.GONE); // Ukrywa RecyclerView
+                binding.recipesRecyclerView.setVisibility(View.GONE);
             }
         });
-
-
-
-
 
         binding.recipesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recipesRecyclerView.setAdapter(adapter);
@@ -69,18 +61,13 @@ public class DashboardFragment extends Fragment {
         binding.recipesRecyclerView.addItemDecoration(new SpacesItemDecoration(spaceInPixels));
 
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
-            // Użytkownik nie jest zalogowany, ukryj EditText i Button
             binding.fabAddRecipe.setVisibility(View.GONE);
         }
         else{
             binding.fabAddRecipe.setVisibility(View.VISIBLE);
         }
 
-
-
-
-
-        loadRecipes(); // Asynchroniczne ładowanie danych
+        loadRecipes();
 
         return root;
     }
@@ -93,12 +80,10 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Aktualizacja danych w adapterze
                     RecipesAdapter adapter = (RecipesAdapter) binding.recipesRecyclerView.getAdapter();
                     if (adapter != null) {
                         adapter.updateData(response.body());
                     }
-                    Log.d("DashboardFragment", "Odebrane przepisy: " + response.body());
 
                 } else {
 
@@ -107,7 +92,6 @@ public class DashboardFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                // Obsłuż błąd połączenia lub inny błąd
             }
         });
     }
@@ -117,7 +101,6 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Sprawdź, czy RecyclerView jest niewidoczny i jeśli tak, to go pokaż
         if (binding.recipesRecyclerView.getVisibility() == View.GONE) {
             binding.recipesRecyclerView.setVisibility(View.VISIBLE);
         }

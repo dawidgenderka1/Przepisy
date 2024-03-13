@@ -8,6 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrimary">#6200EE</color>
+    <color name="backgroundColor">#AF9FDF</color>
+    <color name="backgroundColorNight">#6040BF</color>
+
     <!-- Ciemniejsza wersja podstawowego koloru aplikacji -->
     <color name="colorPrimaryDark">#3700B3</color>
     <!-- Kolor tekstu na przycisku -->

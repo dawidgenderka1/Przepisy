@@ -10,7 +10,6 @@ import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +22,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -32,7 +30,6 @@ import android.widget.Toast;
 
 import com.example.przepisy.AlarmReceiver;
 import com.example.przepisy.CheckFavouriteResponse;
-import com.example.przepisy.CheckOwnershipRequest;
 import com.example.przepisy.CheckOwnershipResponse;
 import com.example.przepisy.Comment;
 import com.example.przepisy.CommentsAdapter;
@@ -41,7 +38,6 @@ import com.example.przepisy.FindRecipeIdRequest;
 import com.example.przepisy.FindRecipeIdResponse;
 import com.example.przepisy.Ingredient;
 import com.example.przepisy.IngredientsAdapter;
-import com.example.przepisy.MainActivity;
 import com.example.przepisy.Note;
 import com.example.przepisy.NoteResponse;
 import com.example.przepisy.R;
@@ -57,7 +53,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -91,7 +86,7 @@ public class RecipeDetailFragment extends Fragment {
     private TextView commentTitle;
 
     public RecipeDetailFragment() {
-        // Required empty public constructor
+
     }
     public static RecipeDetailFragment newInstance(String param1, String param2) {
         RecipeDetailFragment fragment = new RecipeDetailFragment();
@@ -145,16 +140,15 @@ public class RecipeDetailFragment extends Fragment {
         ratingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0) { // Zakładając, że "Oceń" jest na pozycji 0
+                if (position > 0) {
                     int rating = Integer.parseInt(parent.getItemAtPosition(position).toString());
-                    // Aktualizacja oceny w bazie danych
                     updateRating(recipeid, rating);
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Można zignorować
+
             }
         });
 
@@ -166,7 +160,6 @@ public class RecipeDetailFragment extends Fragment {
 
             TimePickerDialog timePicker;
             timePicker = new TimePickerDialog(getActivity(), (view, hourOfDay, minuteOfHour) -> {
-                // Tutaj zapisz wybrany czas i zaplanuj alarm
                 Calendar selectedTime = Calendar.getInstance();
                 selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 selectedTime.set(Calendar.MINUTE, minuteOfHour);
@@ -180,22 +173,18 @@ public class RecipeDetailFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Sprawdź, który obrazek jest obecnie ustawiony
                 if (imageView.getTag() != null && imageView.getTag().equals("full")) {
-                    // Jeśli serce jest pełne, zmień na puste
                     imageView.setImageResource(R.drawable.baseline_favorite_border_24);
-                    imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                    imageView.setTag("empty");
                 } else {
-                    // Jeśli serce jest puste, zmień na pełne
                     imageView.setImageResource(R.drawable.baseline_favorite_24);
-                    imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                    imageView.setTag("full");
                 }
                 toggleFavorite(recipeid);
             }
         });
 
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
-            // Użytkownik nie jest zalogowany, ukryj EditText i Button
             commentEditText.setVisibility(View.GONE);
             sendCommentButton.setVisibility(View.GONE);
             ratingSpinner.setVisibility(View.GONE);
@@ -245,7 +234,6 @@ public class RecipeDetailFragment extends Fragment {
         deleteRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Sprawdź, który obrazek jest obecnie ustawiony
                 deleteRecipe(SessionManager.getInstance(getContext()).getUsername(),title, description);
                 NavController navController = Navigation.findNavController(view);
                 navController.navigate(R.id.action_details10);
@@ -272,12 +260,10 @@ public class RecipeDetailFragment extends Fragment {
 
         commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        // Ustawienie pustego adaptera
         commentsRecyclerView.setAdapter(new CommentsAdapter(new ArrayList<>()));
 
         ingredientsRecyclerView = view.findViewById(R.id.ingredientsRecyclerView);
         ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        // Ustawienie pustego adaptera
         ingredientsRecyclerView.setAdapter(new IngredientsAdapter(new ArrayList<>()));
 
         checkRecipeOwnership(SessionManager.getInstance(getContext()).getUsername(),recipeid);
@@ -298,13 +284,10 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 fetchAndSaveIngredientIds(recipeid);
-                // Pobierz listę ID składników za pomocą SessionManager
                 List<Integer> ingredientIds = SessionManager.getInstance(getActivity()).getIngredientIds();
 
-// Przekształć listę ID na ciąg tekstowy
                 String idsText = ingredientIds.stream().map(Object::toString).collect(Collectors.joining(", "));
 
-// Wyświetl ciąg tekstowy jako Toast
 
 
             }
@@ -317,29 +300,26 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void fetchAndSaveIngredientIds(int recipeId) {
-        UserApiService apiService = ApiClient.getUserService(); // Uzyskaj instancję twojego API
+        UserApiService apiService = ApiClient.getUserService();
         apiService.getIngredientIdsByRecipe(recipeId).enqueue(new Callback<List<Integer>>() {
             @Override
             public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Pobierz aktualną listę ID składników
                     List<Integer> currentIds = SessionManager.getInstance(getContext()).getFridgeIngredientIds();
                     List<Integer> currentIds2 = SessionManager.getInstance(getContext()).getIngredientIds();
                     List<Integer> newIds = response.body();
 
-                    // Sprawdź, czy pobrane ID składników już się znajduje w zapisanej liście
                     boolean isUpdated = false;
                     for (Integer newId : newIds) {
                         if (!currentIds.contains(newId)) {
                             if (!currentIds2.contains(newId)) {
-                                currentIds2.add(newId); // Dodaj nowe ID, jeśli go jeszcze nie ma
+                                currentIds2.add(newId);
                                 isUpdated = true;
                             }
                         }
                     }
 
 
-                    // Zaktualizuj zapisane ID składników, jeśli lista została zmodyfikowana
                     if (isUpdated) {
                         SessionManager.getInstance(getContext()).setIngredientIds(currentIds2);
                         Toast.makeText(getActivity(), "Dodano do listy zakupów.", Toast.LENGTH_LONG).show();
@@ -367,7 +347,6 @@ public class RecipeDetailFragment extends Fragment {
                     if (belongsToUser) {
                         deleteRecipe.setVisibility(View.VISIBLE);
                                         } else {
-                                            // Ukryj przycisk
                                             deleteRecipe.setVisibility(View.GONE);
                     }
                 } else {
@@ -377,7 +356,7 @@ public class RecipeDetailFragment extends Fragment {
 
             @Override
             public void onFailure(Call<CheckOwnershipResponse> call, Throwable t) {
-                // Obsługa błędu połączenia
+
             }
         });
 
@@ -416,7 +395,6 @@ public class RecipeDetailFragment extends Fragment {
         intent.putExtra("cookingTime", cookingTime);
         intent.putExtra("instruction", instruction);
         intent.putExtra("SredniaOcena", SredniaOcena);
-        // Możesz dodać dodatkowe dane do Intentu, jeśli chcesz przekazać do powiadomienia
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
@@ -426,13 +404,9 @@ public class RecipeDetailFragment extends Fragment {
 
 
     private void createComment(int recipeId, String commentText) {
-        // Tutaj logika tworzenia komentarza za pomocą API
-        // Przykład użycia Retrofit do wysłania komentarza
         UserApiService apiService = ApiClient.getUserService();
-        // Zakładając, że masz metodę w UserApiService do tworzenia komentarza
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
-// Pobranie aktualnej daty i czasu
         String today = dateFormat.format(new Date());
 
         String username = SessionManager.getInstance(getContext()).getUsername();
@@ -448,7 +422,6 @@ public class RecipeDetailFragment extends Fragment {
                     hideKeyboardFrom(getContext(), view);
                     loadComments(recipeId, commentsRecyclerView);
 
-                    // Możesz odświeżyć listę komentarzy itd.
                 } else {
                     Toast.makeText(getContext(), "Nie udało się dodać komentarza", Toast.LENGTH_SHORT).show();
                 }
@@ -486,10 +459,8 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void loadIngredients(int recipeId, RecyclerView ingredientsRecyclerView) {
-        // Pobranie aktualnego języka z SessionManagera
         String currentLanguage = SessionManager.getInstance(getContext()).getLanguage();
 
-        // Wywołanie API z dodatkowym parametrem dla języka
         UserApiService apiService = ApiClient.getUserService();
         apiService.getIngredientsByRecipe(recipeId, currentLanguage).enqueue(new Callback<List<Ingredient>>() {
             @Override
@@ -520,10 +491,8 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void updateRating(int recipeId, int rating) {
-        // Przygotuj dane oceny
         Rating ratingData = new Rating(recipeId, SessionManager.getInstance(getContext()).getUsername(), rating);
 
-        // Użyj Retrofit do aktualizacji oceny
         UserApiService apiService = ApiClient.getUserService();
         apiService.addRating(ratingData).enqueue(new Callback<Void>() {
             @Override
@@ -549,10 +518,8 @@ public class RecipeDetailFragment extends Fragment {
             public void onResponse(Call<RatingResponse> call, Response<RatingResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     int rating = response.body().getStars();
-                    // Ustaw spinner na odpowiedniej pozycji
                     setRatingSpinnerPosition(rating);
                 } else {
-                    // Jeśli ocena nie istnieje lub jest błąd, ustaw na "Oceń"
                     ratingSpinner.setSelection(0);
                 }
             }
@@ -560,7 +527,7 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<RatingResponse> call, Throwable t) {
                 Log.e("RatingFetchError", "Error fetching rating: ", t);
-                ratingSpinner.setSelection(0); // Ustaw na "Oceń" w przypadku błędu
+                ratingSpinner.setSelection(0);
             }
         });
     }
@@ -572,10 +539,8 @@ public class RecipeDetailFragment extends Fragment {
             public void onResponse(Call<NoteResponse> call, Response<NoteResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     String noteText = response.body().getNoteText();
-                    // Ustaw tekst notatki w EditText
                     noteEditText.setText(noteText);
                 } else {
-                    // Jeśli notatka nie istnieje lub jest błąd, ustaw puste pole
                     noteEditText.setText("");
                 }
             }
@@ -583,7 +548,7 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<NoteResponse> call, Throwable t) {
                 Log.e("NoteFetchError", "Error fetching note: ", t);
-                noteEditText.setText(""); // Ustaw puste pole w przypadku błędu
+                noteEditText.setText("");
             }
         });
     }
@@ -596,8 +561,6 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void createNote(int recipeId, String noteText) {
-        // Tutaj logika tworzenia komentarza za pomocą API
-        // Przykład użycia Retrofit do wysłania komentarza
         UserApiService apiService = ApiClient.getUserService();
 
         String username = SessionManager.getInstance(getContext()).getUsername();
@@ -610,7 +573,6 @@ public class RecipeDetailFragment extends Fragment {
                     Toast.makeText(getContext(), "Notatka została dodana", Toast.LENGTH_SHORT).show();
                     hideKeyboardFrom(getContext(), view);
 
-                    // Możesz odświeżyć listę komentarzy itd.
                 } else {
                     Toast.makeText(getContext(), "Nie udało się dodać notatki", Toast.LENGTH_SHORT).show();
                 }
@@ -624,33 +586,23 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void toggleFavorite(int recipeId) {
-        // Pobranie nazwy użytkownika z menedżera sesji lub innego źródła przechowującego dane użytkownika
         String username = SessionManager.getInstance(getContext()).getUsername();
-
-        // Utworzenie instancji serwisu API
         UserApiService apiService = ApiClient.getUserService();
-
-        // Utworzenie obiektu żądania
         FavouriteToggleRequest request = new FavouriteToggleRequest(username, recipeId);
 
-        // Wywołanie metody API do przełączania ulubionych
         apiService.toggleFavorite(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    // Informacja dla użytkownika o pomyślnym dodaniu/usunięciu przepisu z ulubionych
                     Toast.makeText(getContext(), "Status ulubionych zmieniony", Toast.LENGTH_SHORT).show();
 
-                    // Tutaj możesz odświeżyć UI, np. zmienić ikonę serca
                 } else {
-                    // Obsługa odpowiedzi niepomyślnej, np. błędu walidacji lub problemów serwera
                     Toast.makeText(getContext(), "Nie udało się zmienić statusu ulubionych", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                // Obsługa błędu połączenia
                 Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
             }
         });
@@ -658,48 +610,32 @@ public class RecipeDetailFragment extends Fragment {
 
     private void checkIfRecipeIsFavorite(int recipeId) {
         String username = SessionManager.getInstance(getContext()).getUsername();
-        // Utworzenie instancji serwisu API
         UserApiService apiService = ApiClient.getUserService();
 
-        // Wywołanie metody checkFavorite z interfejsu API
         Call<CheckFavouriteResponse> call = apiService.checkFavorite(username, recipeId);
         call.enqueue(new Callback<CheckFavouriteResponse>() {
             @Override
             public void onResponse(Call<CheckFavouriteResponse> call, Response<CheckFavouriteResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Obsługa odpowiedzi - sprawdzenie, czy przepis jest ulubiony
                     boolean isFavorite = response.body().isFavourite();
                     if (isFavorite) {
-                        // Przepis jest w ulubionych
                         Log.d("CheckFavorite", "Przepis jest dodany do ulubionych.");
                         imageView.setImageResource(R.drawable.baseline_favorite_24);
-                        imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                        imageView.setTag("full");
                     } else {
-                        // Przepis nie jest w ulubionych
                         Log.d("CheckFavorite", "Przepis nie jest dodany do ulubionych.");
                         imageView.setImageResource(R.drawable.baseline_favorite_border_24);
-                        imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                        imageView.setTag("empty");
                     }
                 } else {
-                    // Błąd podczas komunikacji z serwerem lub błąd po stronie serwera
                     Log.e("CheckFavorite", "Nie udało się sprawdzić ulubionych.");
                 }
             }
 
             @Override
             public void onFailure(Call<CheckFavouriteResponse> call, Throwable t) {
-                // Błąd połączenia z serwerem lub inny błąd
                 Log.e("CheckFavorite", "Błąd połączenia: " + t.getMessage());
             }
         });
     }
-
-
-
-
-
-
-
-
-
 }

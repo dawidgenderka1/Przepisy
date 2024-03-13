@@ -45,7 +45,7 @@ public class IngredientRecipeFragment extends Fragment {
 
 
     public IngredientRecipeFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -97,20 +97,18 @@ public class IngredientRecipeFragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Brak składników", Toast.LENGTH_SHORT).show();
             }
-            // Teraz masz listę nazw składników, którą możesz użyć w tym fragmencie
         }
 
         RecipesAdapter adapter = new RecipesAdapter(new ArrayList<>(), new RecipesAdapter.RecipeClickListener() {
             @Override
             public void onRecipeClick(Recipe recipe) {
-                // Tutaj możesz na przykład wyświetlić Toast z dodatkowymi informacjami
                 Log.d("55", "index=");
             }
 
 
             @Override
             public void onHideRecyclerView() {
-                binding.recipesRecyclerView.setVisibility(View.GONE); // Ukrywa RecyclerView
+                binding.recipesRecyclerView.setVisibility(View.GONE);
             }
         });
 
@@ -124,14 +122,13 @@ public class IngredientRecipeFragment extends Fragment {
 
 
 
-        loadRecipes(); // Asynchroniczne ładowanie danych
+        loadRecipes();
 
         return root;
     }
     @Override
     public void onResume() {
         super.onResume();
-        // Sprawdź, czy RecyclerView jest niewidoczny i jeśli tak, to go pokaż
         if (binding.recipesRecyclerView.getVisibility() == View.GONE) {
             binding.recipesRecyclerView.setVisibility(View.VISIBLE);
         }
@@ -144,7 +141,6 @@ public class IngredientRecipeFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Aktualizacja danych w adapterze
                     RecipesAdapter adapter = (RecipesAdapter) binding.recipesRecyclerView.getAdapter();
                     if (adapter != null) {
                         adapter.updateData(response.body());
@@ -158,7 +154,7 @@ public class IngredientRecipeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                // Obsłuż błąd połączenia lub inny błąd
+
             }
         });
     }

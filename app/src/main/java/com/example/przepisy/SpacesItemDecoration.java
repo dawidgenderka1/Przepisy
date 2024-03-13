@@ -17,7 +17,6 @@ public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
         outRect.right = space;
         outRect.bottom = space;
 
-        // Dodajemy odstęp na górze dla wszystkich elementów oprócz pierwszego
         if (parent.getChildAdapterPosition(view) == 0) {
             outRect.top = space;
         }

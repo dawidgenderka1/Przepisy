@@ -31,10 +31,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Comment comment = commentsList.get(position);
-        // Ustawianie tekstu itd.
         holder.commentText.setText(comment.getCommentText());
-        String inputPattern = "yyyy-MM-dd"; // Załóżmy, że data jest w tym formacie
-        String outputPattern = "dd-MM-yyyy"; // Żądany format wyjściowy
+        String inputPattern = "yyyy-MM-dd";
+        String outputPattern = "dd-MM-yyyy";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.getDefault());
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.getDefault());
 
@@ -44,7 +43,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             holder.commentDate.setText(formattedDate);
         } catch (ParseException e) {
             e.printStackTrace();
-            holder.commentDate.setText(comment.getCommentDate()); // Ustaw oryginalną datę, jeśli wystąpi błąd
+            holder.commentDate.setText(comment.getCommentDate());
         }
         holder.userID.setText(comment.getUsername());
 

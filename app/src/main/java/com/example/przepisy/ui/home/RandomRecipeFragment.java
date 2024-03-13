@@ -103,7 +103,6 @@ public class RandomRecipeFragment extends Fragment {
     private ImageView deleteRecipe;
 
     public RandomRecipeFragment() {
-        // Required empty public constructor
     }
     public static com.example.przepisy.ui.home.RandomRecipeFragment newInstance(String param1, String param2) {
         com.example.przepisy.ui.home.RandomRecipeFragment fragment = new com.example.przepisy.ui.home.RandomRecipeFragment();
@@ -154,29 +153,26 @@ public class RandomRecipeFragment extends Fragment {
         deleteRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Sprawdź, który obrazek jest obecnie ustawiony
                 deleteRecipe(SessionManager.getInstance(getContext()).getUsername(),title, description);
                 NavController navController = Navigation.findNavController(view);
                 navController.navigate(R.id.action_details10);
             }
         });
 
-        // Rejestrujemy callback w Dispatcherze przycisku cofnij, który jest powiązany z cyklem życia widoku fragmentu
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         ratingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0) { // Zakładając, że "Oceń" jest na pozycji 0
+                if (position > 0) {
                     int rating = Integer.parseInt(parent.getItemAtPosition(position).toString());
-                    // Aktualizacja oceny w bazie danych
                     updateRating(recipeid, rating);
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Można zignorować
+
             }
         });
 
@@ -188,7 +184,6 @@ public class RandomRecipeFragment extends Fragment {
 
             TimePickerDialog timePicker;
             timePicker = new TimePickerDialog(getActivity(), (view, hourOfDay, minuteOfHour) -> {
-                // Tutaj zapisz wybrany czas i zaplanuj alarm
                 Calendar selectedTime = Calendar.getInstance();
                 selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 selectedTime.set(Calendar.MINUTE, minuteOfHour);
@@ -202,22 +197,18 @@ public class RandomRecipeFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Sprawdź, który obrazek jest obecnie ustawiony
                 if (imageView.getTag() != null && imageView.getTag().equals("full")) {
-                    // Jeśli serce jest pełne, zmień na puste
                     imageView.setImageResource(R.drawable.baseline_favorite_border_24);
-                    imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                    imageView.setTag("empty");
                 } else {
-                    // Jeśli serce jest puste, zmień na pełne
                     imageView.setImageResource(R.drawable.baseline_favorite_24);
-                    imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                    imageView.setTag("full");
                 }
                 toggleFavorite(recipeid);
             }
         });
 
         if (!SessionManager.getInstance(getContext()).isLoggedIn()) {
-            // Użytkownik nie jest zalogowany, ukryj EditText i Button
             commentEditText.setVisibility(View.GONE);
             sendCommentButton.setVisibility(View.GONE);
             ratingSpinner.setVisibility(View.GONE);
@@ -241,8 +232,7 @@ public class RandomRecipeFragment extends Fragment {
 
         ArrayList<Recipe> recipesList = getArguments().getParcelableArrayList("recipesList");
         if (recipesList != null && !recipesList.isEmpty()) {
-            // Przykład użycia pierwszego przepisu z listy
-            Recipe firstRecipe = recipesList.get(0); // lub użyj pętli, aby obsłużyć wszystkie przepisy
+            Recipe firstRecipe = recipesList.get(0);
             title = firstRecipe.getTitle();
             recipeid = firstRecipe.getRecipeID();
             description = firstRecipe.getDescription();
@@ -250,7 +240,6 @@ public class RandomRecipeFragment extends Fragment {
             cuisineType = firstRecipe.getSredniaOcena();
             instruction = firstRecipe.getInstrukcja();
             Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
-            // Użyj tych zmiennych do aktualizacji UI
             ((TextView) view.findViewById(R.id.recipeTitle)).setText(title);
             ((TextView) view.findViewById(R.id.recipeDescription)).setText(description);
             ((TextView) view.findViewById(R.id.recipeCookingTime)).setText(String.valueOf(cookingTime));
@@ -282,12 +271,10 @@ public class RandomRecipeFragment extends Fragment {
 
         commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        // Ustawienie pustego adaptera
         commentsRecyclerView.setAdapter(new CommentsAdapter(new ArrayList<>()));
 
         ingredientsRecyclerView = view.findViewById(R.id.ingredientsRecyclerView);
         ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        // Ustawienie pustego adaptera
         ingredientsRecyclerView.setAdapter(new IngredientsAdapter(new ArrayList<>()));
 
         checkRecipeOwnership(SessionManager.getInstance(getContext()).getUsername(),recipeid);
@@ -298,7 +285,6 @@ public class RandomRecipeFragment extends Fragment {
 
 
 
-        //int recipeId = getArguments().getInt("recipeId", -1);
         fetchAndSetRating(recipeid, SessionManager.getInstance(getContext()).getUsername());
         fetchAndSetNote(recipeid, SessionManager.getInstance(getContext()).getUsername());
         loadComments(recipeid, commentsRecyclerView);
@@ -308,13 +294,10 @@ public class RandomRecipeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 fetchAndSaveIngredientIds(recipeid);
-                // Pobierz listę ID składników za pomocą SessionManager
                 List<Integer> ingredientIds = SessionManager.getInstance(getActivity()).getIngredientIds();
 
-// Przekształć listę ID na ciąg tekstowy
                 String idsText = ingredientIds.stream().map(Object::toString).collect(Collectors.joining(", "));
 
-// Wyświetl ciąg tekstowy jako Toast
 
 
             }
@@ -327,12 +310,11 @@ public class RandomRecipeFragment extends Fragment {
     }
 
     private void fetchAndSaveIngredientIds(int recipeId) {
-        UserApiService apiService = ApiClient.getUserService(); // Uzyskaj instancję twojego API
+        UserApiService apiService = ApiClient.getUserService();
         apiService.getIngredientIdsByRecipe(recipeId).enqueue(new Callback<List<Integer>>() {
             @Override
             public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Zapisz pobrane ID składników w SessionManager
                     SessionManager.getInstance(getContext()).setIngredientIds(response.body());
                 } else {
                     Log.e("TAG", "Nie udało się pobrać ID składników: " + response.message());
@@ -357,7 +339,6 @@ public class RandomRecipeFragment extends Fragment {
                     if (belongsToUser) {
                         deleteRecipe.setVisibility(View.VISIBLE);
                     } else {
-                        // Ukryj przycisk
                         deleteRecipe.setVisibility(View.GONE);
                     }
                 } else {
@@ -368,7 +349,7 @@ public class RandomRecipeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<CheckOwnershipResponse> call, Throwable t) {
-                // Obsługa błędu połączenia
+
             }
         });
 
@@ -377,7 +358,6 @@ public class RandomRecipeFragment extends Fragment {
 
     private void deleteRecipe(String username, String title, String description) {
         UserApiService apiService = ApiClient.getUserService();
-        //Log.e("testetesttetst", username+title+description);
         FindRecipeIdRequest request = new FindRecipeIdRequest(username, title, description);
         apiService.deleteRecipe(request).enqueue(new Callback<FindRecipeIdResponse>() {
             @Override
@@ -405,7 +385,6 @@ public class RandomRecipeFragment extends Fragment {
         intent.putExtra("cuisineType", cuisineType);
         intent.putExtra("cookingTime", cookingTime);
         intent.putExtra("instruction", instruction);
-        // Możesz dodać dodatkowe dane do Intentu, jeśli chcesz przekazać do powiadomienia
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
@@ -415,13 +394,9 @@ public class RandomRecipeFragment extends Fragment {
 
 
     private void createComment(int recipeId, String commentText) {
-        // Tutaj logika tworzenia komentarza za pomocą API
-        // Przykład użycia Retrofit do wysłania komentarza
         UserApiService apiService = ApiClient.getUserService();
-        // Zakładając, że masz metodę w UserApiService do tworzenia komentarza
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
-// Pobranie aktualnej daty i czasu
         String today = dateFormat.format(new Date());
 
         String username = SessionManager.getInstance(getContext()).getUsername();
@@ -437,7 +412,6 @@ public class RandomRecipeFragment extends Fragment {
                     hideKeyboardFrom(getContext(), view);
                     loadComments(recipeId, commentsRecyclerView);
 
-                    // Możesz odświeżyć listę komentarzy itd.
                 } else {
                     Toast.makeText(getContext(), "Nie udało się dodać komentarza", Toast.LENGTH_SHORT).show();
                 }
@@ -475,10 +449,8 @@ public class RandomRecipeFragment extends Fragment {
     }
 
     private void loadIngredients(int recipeId, RecyclerView ingredientsRecyclerView) {
-        // Pobranie aktualnego języka z SessionManagera
         String currentLanguage = SessionManager.getInstance(getContext()).getLanguage();
 
-        // Wywołanie API z dodatkowym parametrem dla języka
         UserApiService apiService = ApiClient.getUserService();
         apiService.getIngredientsByRecipe(recipeId, currentLanguage).enqueue(new Callback<List<Ingredient>>() {
             @Override
@@ -509,10 +481,8 @@ public class RandomRecipeFragment extends Fragment {
     }
 
     private void updateRating(int recipeId, int rating) {
-        // Przygotuj dane oceny
         Rating ratingData = new Rating(recipeId, SessionManager.getInstance(getContext()).getUsername(), rating);
 
-        // Użyj Retrofit do aktualizacji oceny
         UserApiService apiService = ApiClient.getUserService();
         apiService.addRating(ratingData).enqueue(new Callback<Void>() {
             @Override
@@ -538,10 +508,8 @@ public class RandomRecipeFragment extends Fragment {
             public void onResponse(Call<RatingResponse> call, Response<RatingResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     int rating = response.body().getStars();
-                    // Ustaw spinner na odpowiedniej pozycji
                     setRatingSpinnerPosition(rating);
                 } else {
-                    // Jeśli ocena nie istnieje lub jest błąd, ustaw na "Oceń"
                     ratingSpinner.setSelection(0);
                 }
             }
@@ -549,7 +517,7 @@ public class RandomRecipeFragment extends Fragment {
             @Override
             public void onFailure(Call<RatingResponse> call, Throwable t) {
                 Log.e("RatingFetchError", "Error fetching rating: ", t);
-                ratingSpinner.setSelection(0); // Ustaw na "Oceń" w przypadku błędu
+                ratingSpinner.setSelection(0);
             }
         });
     }
@@ -561,10 +529,8 @@ public class RandomRecipeFragment extends Fragment {
             public void onResponse(Call<NoteResponse> call, Response<NoteResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     String noteText = response.body().getNoteText();
-                    // Ustaw tekst notatki w EditText
                     noteEditText.setText(noteText);
                 } else {
-                    // Jeśli notatka nie istnieje lub jest błąd, ustaw puste pole
                     noteEditText.setText("błąd");
                 }
             }
@@ -572,7 +538,7 @@ public class RandomRecipeFragment extends Fragment {
             @Override
             public void onFailure(Call<NoteResponse> call, Throwable t) {
                 Log.e("NoteFetchError", "Error fetching note: ", t);
-                noteEditText.setText(""); // Ustaw puste pole w przypadku błędu
+                noteEditText.setText("");
             }
         });
     }
@@ -585,8 +551,6 @@ public class RandomRecipeFragment extends Fragment {
     }
 
     private void createNote(int recipeId, String noteText) {
-        // Tutaj logika tworzenia komentarza za pomocą API
-        // Przykład użycia Retrofit do wysłania komentarza
         UserApiService apiService = ApiClient.getUserService();
 
         String username = SessionManager.getInstance(getContext()).getUsername();
@@ -599,7 +563,6 @@ public class RandomRecipeFragment extends Fragment {
                     Toast.makeText(getContext(), "Notatka została dodany", Toast.LENGTH_SHORT).show();
                     hideKeyboardFrom(getContext(), view);
 
-                    // Możesz odświeżyć listę komentarzy itd.
                 } else {
                     Toast.makeText(getContext(), "Nie udało się dodać notatki", Toast.LENGTH_SHORT).show();
                 }
@@ -613,33 +576,23 @@ public class RandomRecipeFragment extends Fragment {
     }
 
     private void toggleFavorite(int recipeId) {
-        // Pobranie nazwy użytkownika z menedżera sesji lub innego źródła przechowującego dane użytkownika
         String username = SessionManager.getInstance(getContext()).getUsername();
-
-        // Utworzenie instancji serwisu API
         UserApiService apiService = ApiClient.getUserService();
-
-        // Utworzenie obiektu żądania
         FavouriteToggleRequest request = new FavouriteToggleRequest(username, recipeId);
 
-        // Wywołanie metody API do przełączania ulubionych
         apiService.toggleFavorite(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    // Informacja dla użytkownika o pomyślnym dodaniu/usunięciu przepisu z ulubionych
                     Toast.makeText(getContext(), "Status ulubionych zmieniony", Toast.LENGTH_SHORT).show();
 
-                    // Tutaj możesz odświeżyć UI, np. zmienić ikonę serca
                 } else {
-                    // Obsługa odpowiedzi niepomyślnej, np. błędu walidacji lub problemów serwera
                     Toast.makeText(getContext(), "Nie udało się zmienić statusu ulubionych", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                // Obsługa błędu połączenia
                 Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
             }
         });
@@ -647,37 +600,30 @@ public class RandomRecipeFragment extends Fragment {
 
     private void checkIfRecipeIsFavorite(int recipeId) {
         String username = SessionManager.getInstance(getContext()).getUsername();
-        // Utworzenie instancji serwisu API
         UserApiService apiService = ApiClient.getUserService();
 
-        // Wywołanie metody checkFavorite z interfejsu API
         Call<CheckFavouriteResponse> call = apiService.checkFavorite(username, recipeId);
         call.enqueue(new Callback<CheckFavouriteResponse>() {
             @Override
             public void onResponse(Call<CheckFavouriteResponse> call, Response<CheckFavouriteResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Obsługa odpowiedzi - sprawdzenie, czy przepis jest ulubiony
                     boolean isFavorite = response.body().isFavourite();
                     if (isFavorite) {
-                        // Przepis jest w ulubionych
                         Log.d("CheckFavorite", "Przepis jest dodany do ulubionych.");
                         imageView.setImageResource(R.drawable.baseline_favorite_24);
-                        imageView.setTag("full"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                        imageView.setTag("full");
                     } else {
-                        // Przepis nie jest w ulubionych
                         Log.d("CheckFavorite", "Przepis nie jest dodany do ulubionych.");
                         imageView.setImageResource(R.drawable.baseline_favorite_border_24);
-                        imageView.setTag("empty"); // Ustaw tag, aby śledzić aktualny stan obrazka
+                        imageView.setTag("empty");
                     }
                 } else {
-                    // Błąd podczas komunikacji z serwerem lub błąd po stronie serwera
                     Log.e("CheckFavorite", "Nie udało się sprawdzić ulubionych.");
                 }
             }
 
             @Override
             public void onFailure(Call<CheckFavouriteResponse> call, Throwable t) {
-                // Błąd połączenia z serwerem lub inny błąd
                 Log.e("CheckFavorite", "Błąd połączenia: " + t.getMessage());
             }
         });

@@ -2,7 +2,7 @@ package com.example.przepisy;
 
 public class IngredientItem {
     private String ingredientName;
-    private int selectedPosition = 0; // Domyślnie wybrana pozycja to 0
+    private int selectedPosition = 0;
 
     public IngredientItem(String ingredientName) {
         this.ingredientName = ingredientName;
