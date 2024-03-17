@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -32,12 +33,12 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NotificationsFragment.BottomNavRefreshListener, NotificationsFragment2.BottomNavRefreshListener {
 
-    private ActivityMainBinding binding;
+    public ActivityMainBinding binding;
     private SessionManager sessionManager;
     int recipeid=-1;
     NavHostFragment navHostFragment;
     NavController navController;
-    private BottomNavigationView navView;
+    BottomNavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,14 +125,26 @@ public class MainActivity extends AppCompatActivity implements NotificationsFrag
 
 
     public void refreshBottomNav() {
-        navView.getMenu().clear();
-        navView.inflateMenu(R.menu.bottom_nav_menu);
+        //Menu menu = binding.navView.getMenu();
+        //boolean isLoggedIn = sessionManager.isLoggedIn();
 
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
+        //if (isLoggedIn) {
+        //    navController.setGraph(R.navigation.mobile_navigation2);
+        //    menu.clear();
+        //    getMenuInflater().inflate(R.menu.bottom_nav_menu2, menu);
+        //} else {
+        //    navController.setGraph(R.navigation.mobile_navigation);
+        //    menu.clear();
+        //    getMenuInflater().inflate(R.menu.bottom_nav_menu, menu);
+        //}
+//
+        //AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+        //        navController.getGraph()).build();
+        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        //NavigationUI.setupWithNavController(binding.navView, navController);
     }
+
+
 
 
     public void reloadActivity() {

@@ -6,6 +6,8 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +38,7 @@ public class NotificationsFragment extends Fragment {
     private String savedLanguage;
     private String savedTheme;
     private View root;
+    private View navView2;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -43,6 +46,27 @@ public class NotificationsFragment extends Fragment {
 
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         root = binding.getRoot();
+
+        /*if (SessionManager.getInstance(getContext()).isLoggedIn()){
+
+            Menu bottomNavMenu = ((MainActivity) getActivity()).binding.navView.getMenu();
+            MenuItem menuItem = bottomNavMenu.findItem(R.id.navigation_home2);
+            menuItem.setTitle(getString(R.string.title_home));
+            MenuItem menuItem2 = bottomNavMenu.findItem(R.id.navigation_dashboard2);
+            menuItem2.setTitle(getString(R.string.title_dashboard));
+            MenuItem menuItem3 = bottomNavMenu.findItem(R.id.navigation_notifications2);
+            menuItem3.setTitle(getString(R.string.title_notifications));
+        }
+        else {
+            Menu bottomNavMenu = ((MainActivity) getActivity()).binding.navView.getMenu();
+            MenuItem menuItem = bottomNavMenu.findItem(R.id.navigation_home);
+            menuItem.setTitle(getString(R.string.title_home));
+            MenuItem menuItem2 = bottomNavMenu.findItem(R.id.navigation_dashboard);
+            menuItem2.setTitle(getString(R.string.title_dashboard));
+            MenuItem menuItem3 = bottomNavMenu.findItem(R.id.navigation_notifications);
+            menuItem3.setTitle(getString(R.string.title_notifications));
+        }*/
+
 
 
 
@@ -86,6 +110,25 @@ public class NotificationsFragment extends Fragment {
                         if (refreshListener != null) {
                             refreshListener.refreshBottomNav();
                         }
+                        if (SessionManager.getInstance(getContext()).isLoggedIn()){
+
+                            Menu bottomNavMenu = ((MainActivity) getActivity()).binding.navView.getMenu();
+                            MenuItem menuItem = bottomNavMenu.findItem(R.id.navigation_home2);
+                            menuItem.setTitle(getString(R.string.title_home));
+                            MenuItem menuItem2 = bottomNavMenu.findItem(R.id.navigation_dashboard2);
+                            menuItem2.setTitle(getString(R.string.title_dashboard));
+                            MenuItem menuItem3 = bottomNavMenu.findItem(R.id.navigation_notifications2);
+                            menuItem3.setTitle(getString(R.string.title_notifications));
+                        }
+                        else {
+                            Menu bottomNavMenu = ((MainActivity) getActivity()).binding.navView.getMenu();
+                            MenuItem menuItem = bottomNavMenu.findItem(R.id.navigation_home);
+                            menuItem.setTitle(getString(R.string.title_home));
+                            MenuItem menuItem2 = bottomNavMenu.findItem(R.id.navigation_dashboard);
+                            menuItem2.setTitle(getString(R.string.title_dashboard));
+                            MenuItem menuItem3 = bottomNavMenu.findItem(R.id.navigation_notifications);
+                            menuItem3.setTitle(getString(R.string.title_notifications));
+                        }
                         NavController navController = Navigation.findNavController(root);
                         navController.navigate(R.id.action_details2);
                     }
@@ -101,6 +144,25 @@ public class NotificationsFragment extends Fragment {
                         updateLocale(locale);
                         if (refreshListener != null) {
                             refreshListener.refreshBottomNav();
+                        }
+                        if (SessionManager.getInstance(getContext()).isLoggedIn()){
+
+                            Menu bottomNavMenu = ((MainActivity) getActivity()).binding.navView.getMenu();
+                            MenuItem menuItem = bottomNavMenu.findItem(R.id.navigation_home2);
+                            menuItem.setTitle(getString(R.string.title_home));
+                            MenuItem menuItem2 = bottomNavMenu.findItem(R.id.navigation_dashboard2);
+                            menuItem2.setTitle(getString(R.string.title_dashboard));
+                            MenuItem menuItem3 = bottomNavMenu.findItem(R.id.navigation_notifications2);
+                            menuItem3.setTitle(getString(R.string.title_notifications));
+                        }
+                        else {
+                            Menu bottomNavMenu = ((MainActivity) getActivity()).binding.navView.getMenu();
+                            MenuItem menuItem = bottomNavMenu.findItem(R.id.navigation_home);
+                            menuItem.setTitle(getString(R.string.title_home));
+                            MenuItem menuItem2 = bottomNavMenu.findItem(R.id.navigation_dashboard);
+                            menuItem2.setTitle(getString(R.string.title_dashboard));
+                            MenuItem menuItem3 = bottomNavMenu.findItem(R.id.navigation_notifications);
+                            menuItem3.setTitle(getString(R.string.title_notifications));
                         }
                         NavController navController = Navigation.findNavController(root);
                         navController.navigate(R.id.action_details2);
@@ -206,12 +268,12 @@ public class NotificationsFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof BottomNavRefreshListener) {
-            refreshListener = (BottomNavRefreshListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement BottomNavRefreshListener");
-        }
+        //if (context instanceof BottomNavRefreshListener) {
+        //    refreshListener = (BottomNavRefreshListener) context;
+        //} else {
+        //    throw new RuntimeException(context.toString()
+        //            + " must implement BottomNavRefreshListener");
+        //}
     }
 
 

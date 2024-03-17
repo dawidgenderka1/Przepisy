@@ -35,6 +35,7 @@ public class HomeFragment2 extends Fragment {
             @Override
             public void onClick(View v) {
                 sessionManager.setLogin(false);
+                sessionManager.clearUsername();
 
                 if (getActivity() instanceof MainActivity) {
                     ((MainActivity) getActivity()).reloadActivity();

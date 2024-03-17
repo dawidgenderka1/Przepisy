@@ -52,6 +52,12 @@ public class SessionManager {
         editor.apply();
     }
 
+    public void clearUsername() {
+        editor.remove(USERNAME);
+        editor.apply();
+    }
+
+
     public String getUsername() {
         return prefs.getString(USERNAME, "");
     }

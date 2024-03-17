@@ -38,11 +38,13 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         int ingredientId = ingredient.getIngredientID();
 
         List<Integer> savedIngredientIds = SessionManager.getInstance(context).getFridgeIngredientIds();
+        if(SessionManager.getInstance(context).isLoggedIn()) {
 
-        if (savedIngredientIds.contains(ingredientId)) {
-            holder.imageView.setImageResource(R.drawable.baseline_check_24);
-        } else {
-            holder.imageView.setImageResource(R.drawable.baseline_clear_24);
+            if (savedIngredientIds.contains(ingredientId)) {
+                holder.imageView.setImageResource(R.drawable.baseline_check_24);
+            } else {
+                holder.imageView.setImageResource(R.drawable.baseline_clear_24);
+            }
         }
 
         holder.ingredientName.setText(ingredient.getName());
