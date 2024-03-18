@@ -93,9 +93,10 @@ public class IngredientRecipeFragment extends Fragment {
                     }
                     ingredientsText.append(name);
                 }
-                Toast.makeText(getContext(), ingredientsText.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), ingredientsText.toString(), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "Brak składników", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.miss_ingredients), Toast.LENGTH_SHORT).show();
+
             }
         }
 

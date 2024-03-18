@@ -6,6 +6,22 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="comment_added_message">Comment added</string>
+    <string name="note_added_message">Note saved</string>
+    <string name="favorite_added_message">Favourite status changed</string>
+    <string name="shop_list_added_message">Added ingredients to the shop list</string>
+    <string name="empty_note">Note is empty</string>
+    <string name="empty_comment">Comment is empty</string>
+    <string name="not_ingredients">Not enough ingredients</string>
+    <string name="login_req">Username and password are required</string>
+    <string name="login_success">Login successful</string>
+    <string name="wrong_info">Not all data filled</string>
+    <string name="wrong_password">Passwords do not match</string>
+    <string name="wrong_email">Incorrect e-mail</string>
+    <string name="registration_success">Registration successful</string>
+    <string name="miss_ingredients">Missing ingredients</string>
+
+
     <string name="title_hint">Recipe Title</string>
     <string name="description_hint">Recipe Description</string>
     <string name="cooking_time_hint">Cooking Time</string>

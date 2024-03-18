@@ -256,7 +256,8 @@ public class RandomRecipeFragment extends Fragment {
             if (!commentText.isEmpty()) {
                 createComment(recipeid, commentText);
             } else {
-                Toast.makeText(getContext(), "Komentarz nie może być pusty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.empty_comment), Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -265,7 +266,8 @@ public class RandomRecipeFragment extends Fragment {
             if (!noteText.isEmpty()) {
                 createNote(recipeid, noteText);
             } else {
-                Toast.makeText(getContext(), "Notatka jest pusta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.empty_note), Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -407,19 +409,19 @@ public class RandomRecipeFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Komentarz został dodany", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.comment_added_message), Toast.LENGTH_SHORT).show();
                     commentEditText.setText("");
                     hideKeyboardFrom(getContext(), view);
                     loadComments(recipeId, commentsRecyclerView);
 
                 } else {
-                    Toast.makeText(getContext(), "Nie udało się dodać komentarza", Toast.LENGTH_SHORT).show();
+
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -490,13 +492,13 @@ public class RandomRecipeFragment extends Fragment {
                 if (response.isSuccessful()) {
                     //Toast.makeText(getContext(), "Ocena została zaktualizowana", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Nie udało się zaktualizować oceny", Toast.LENGTH_SHORT).show();
+
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -560,17 +562,17 @@ public class RandomRecipeFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Notatka została dodany", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.note_added_message), Toast.LENGTH_SHORT).show();
                     hideKeyboardFrom(getContext(), view);
 
                 } else {
-                    Toast.makeText(getContext(), "Nie udało się dodać notatki", Toast.LENGTH_SHORT).show();
+
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -584,16 +586,16 @@ public class RandomRecipeFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Status ulubionych zmieniony", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.favorite_added_message), Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Toast.makeText(getContext(), "Nie udało się zmienić statusu ulubionych", Toast.LENGTH_SHORT).show();
+
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(getContext(), "Błąd połączenia", Toast.LENGTH_SHORT).show();
+
             }
         });
     }

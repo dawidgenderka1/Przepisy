@@ -11,6 +11,21 @@
     <string name="cooking_time_hint">Czas przygotowania</string>
     <string name="instructions_hint">Instrukcje</string>
 
+    <string name="comment_added_message">Komentarz został dodany</string>
+    <string name="note_added_message">Notatkę zapisano</string>
+    <string name="favorite_added_message">Zmieniono status ulubionych</string>
+    <string name="shop_list_added_message">Dodano składniki do listy zakupów</string>
+    <string name="empty_note">Notatka jest pusta</string>
+    <string name="empty_comment">Komentarz jest pusty</string>
+    <string name="not_ingredients">Nie wystarczająca ilość składników</string>
+    <string name="login_req">Nazwa użytkownika i hasło są wymagane</string>
+    <string name="login_success">Logowanie udane</string>
+    <string name="wrong_info">Nie wypełniono wszystkich danych</string>
+    <string name="wrong_password">Hasła się nie zgadzają</string>
+    <string name="wrong_email">Nieprawidłowy e-mail</string>
+    <string name="registration_success">Rejestracja pomyślna</string>
+    <string name="miss_ingredients">Brak składników</string>
+
 
     <string name="remove">X</string>
     <string name="quantity">Ilość</string>

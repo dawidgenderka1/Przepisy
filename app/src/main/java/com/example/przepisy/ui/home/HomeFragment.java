@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.przepisy.Hash;
 import com.example.przepisy.MainActivity;
+import com.example.przepisy.R;
 import com.example.przepisy.SessionManager;
 import com.example.przepisy.User;
 import com.example.przepisy.api.ApiClient;
@@ -84,7 +85,8 @@ public class HomeFragment extends Fragment {
         String password = binding.loginPassword.getText().toString();
 
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(getContext(), "Nazwa użytkownika i hasło są wymagane", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.login_req), Toast.LENGTH_SHORT).show();
+
             return;
         }
 
@@ -96,7 +98,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Logowanie udane", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+
                     sessionManager.setLogin(true);
                     sessionManager.setUsername(username);
                     if (getActivity() instanceof MainActivity) {
@@ -122,17 +125,17 @@ public class HomeFragment extends Fragment {
         String confirmPassword = binding.registerConfirmPassword.getText().toString();
 
         if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
-            Toast.makeText(getContext(), "Nie wypełniono wszystkich danych", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.wrong_info), Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(getContext(), "Hasła się nie zgadzają", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.wrong_password), Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!isValidEmail(email)) {
-            Toast.makeText(getContext(), "Błędny e-mail", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.wrong_email), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -147,7 +150,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Rejestracja pomyślna", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.registration_success), Toast.LENGTH_SHORT).show();
+
                     sessionManager.setLogin(true);
                     sessionManager.setUsername(username);
                     if (getActivity() instanceof MainActivity) {

@@ -244,7 +244,8 @@ public class FridgeFragment extends Fragment {
                         NavController navController = Navigation.findNavController(getView());
                         navController.navigate(R.id.action_details5, bundle);
                     } else {
-                        Toast.makeText(getContext(), "Nie wystarczająca ilość składników", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.not_ingredients), Toast.LENGTH_SHORT).show();
+
                     }
 
                 } else {
@@ -279,7 +280,7 @@ public class FridgeFragment extends Fragment {
                         navController.navigate(R.id.action_details6, bundle);
 
                     } else {
-                        Toast.makeText(getContext(), "Nie wystarczająca ilość składników", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.not_ingredients), Toast.LENGTH_SHORT).show();
                     }
 
                 } else {
