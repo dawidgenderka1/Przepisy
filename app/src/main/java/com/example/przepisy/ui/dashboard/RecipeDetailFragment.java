@@ -498,7 +498,7 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Ocena została zaktualizowana", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Ocena została zaktualizowana", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "Nie udało się zaktualizować oceny", Toast.LENGTH_SHORT).show();
                 }

@@ -312,30 +312,32 @@ public class FridgeFragment extends Fragment {
         for (int i = 0; i < ingredientsContainer.getChildCount(); i++) {
             View ingredientView = ingredientsContainer.getChildAt(i);
             Spinner ingredientSpinner = ingredientView.findViewById(R.id.ingredientNameSpinner);
-            String ingredientName = ingredientSpinner.getSelectedItem().toString();
+            String ingredientName = (String) ingredientSpinner.getSelectedItem();
 
-            apiService.getIngredientId(SessionManager.getInstance(getContext()).getLanguage(), ingredientName).enqueue(new Callback<IngredientIdResponse>() {
-                @Override
-                public void onResponse(Call<IngredientIdResponse> call, Response<IngredientIdResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        ingredientIds.add(response.body().getIngredientID());
+            if (ingredientName != null) {
+                apiService.getIngredientId(SessionManager.getInstance(getContext()).getLanguage(), ingredientName).enqueue(new Callback<IngredientIdResponse>() {
+                    @Override
+                    public void onResponse(Call<IngredientIdResponse> call, Response<IngredientIdResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            ingredientIds.add(response.body().getIngredientID());
 
-                        if (ingredientIds.size() == ingredientsContainer.getChildCount()) {
-                            SessionManager.getInstance(getContext()).setFridgeIngredientIds(ingredientIds);
-
+                            if (ingredientIds.size() == ingredientsContainer.getChildCount()) {
+                                SessionManager.getInstance(getContext()).setFridgeIngredientIds(ingredientIds);
+                            }
+                        } else {
+                            Log.e("FridgeFragment", "Nie dziala" + ingredientName);
                         }
-                    } else {
-                        Log.e("FridgeFragment", "Nie udało się pobrać ID składnika: " + ingredientName);
                     }
-                }
 
-                @Override
-                public void onFailure(Call<IngredientIdResponse> call, Throwable t) {
-                    Log.e("FridgeFragment", "Błąd połączenia: " + t.getMessage());
-                }
-            });
+                    @Override
+                    public void onFailure(Call<IngredientIdResponse> call, Throwable t) {
+                        Log.e("FridgeFragment", "Błąd połączenia: " + t.getMessage());
+                    }
+                });
+            }
         }
     }
+
 
     private void createIngredientSpinner(Integer ingredientId, boolean isRemovable) {
         View ingredientView = LayoutInflater.from(getContext()).inflate(R.layout.ingredient_item2, null, false);
